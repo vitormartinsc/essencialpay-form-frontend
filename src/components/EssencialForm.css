@@ -1,0 +1,178 @@
+/* Estilos específicos do projeto Essencial baseados no projeto original */
+
+/* Formulário principal */
+.essencial-form {
+  background-color: #FFFFFF !important;
+  color: #0033ff !important;
+  padding: 32px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Título principal */
+.essencial-form h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #0033ff;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Inputs do formulário */
+.essencial-form input[type="text"], 
+.essencial-form input[type="password"],
+.essencial-form input[type="email"],
+.essencial-form input[type="tel"],
+.essencial-form .MuiInputBase-input {
+  width: 100%;
+  max-width: 400px;
+  margin-left: 0;
+  margin-right: 0;
+  display: block;
+  min-height: 36px;
+  font-size: 1.05rem;
+  padding: 10px 8px;
+  box-sizing: border-box;
+  background: #fff !important;
+  color: #0033ff !important;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.essencial-form input::placeholder,
+.essencial-form .MuiInputBase-input::placeholder {
+  color: #FFD700 !important;
+  opacity: 1 !important;
+}
+
+.essencial-form input:focus,
+.essencial-form .MuiInputBase-input:focus {
+  outline: none;
+  border: 1px solid #0033ff !important;
+  box-shadow: 0 0 6px rgba(0, 51, 255, 0.5) !important;
+}
+
+/* Labels */
+.essencial-form .MuiInputLabel-root {
+  color: #0033ff !important;
+  font-size: 1.05rem !important;
+  font-weight: 500 !important;
+}
+
+/* Botões */
+.essencial-form .MuiButton-root {
+  background-color: #0033ff !important;
+  color: #fff !important;
+  font-weight: bold !important;
+  border-radius: 12px !important;
+  min-height: 36px !important;
+  padding: 0 20px !important;
+  font-size: 15px !important;
+  text-transform: none !important;
+  box-shadow: none !important;
+}
+
+.essencial-form .MuiButton-root:hover {
+  background-color: #0022aa !important;
+}
+
+.essencial-form .MuiButton-root:disabled {
+  background-color: #ccc !important;
+  color: #666 !important;
+}
+
+/* Alertas */
+.essencial-form .MuiAlert-root {
+  background: #FFD700 !important;
+  color: #0056FF !important;
+  border: none !important;
+  font-weight: 500 !important;
+  text-align: center !important;
+  border-radius: 4px !important;
+}
+
+.essencial-form .MuiAlert-icon {
+  color: #0056FF !important;
+}
+
+/* Select fields - altura consistente */
+.essencial-form .MuiSelect-select {
+  padding: 10px 8px !important;
+  height: 24px !important;
+  font-size: 1.05rem !important;
+  color: #0033ff !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.essencial-form .MuiFormControl-root .MuiInputBase-root {
+  height: 44px !important;
+  min-height: 44px !important;
+}
+
+/* Typography customizado */
+.essencial-form .MuiTypography-h6 {
+  color: #0033ff !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .essencial-form {
+    padding: 24px 16px;
+    max-width: 100%;
+    margin: 10px;
+  }
+  
+  .essencial-form .form-container {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .essencial-form .form-container input {
+    flex: 1 1 100%;
+  }
+}
+
+@media (min-width: 769px) {
+  .essencial-form .form-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 80%;
+  }
+
+  .essencial-form .form-container input {
+    flex: 1 1 45%;
+  }
+}
+
+/* Remove bordas padrão do MUI quando não necessárias */
+.essencial-form .MuiOutlinedInput-notchedOutline {
+  display: none !important;
+}
+
+/* Footer */
+.essencial-form .footer {
+  font-size: 0.8rem;
+  margin-top: 20px;
+  color: #FFD700;
+}
+
+/* Warning messages */
+.essencial-form .warning {
+  background-color: #FFD700;
+  color: #0056FF;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
