@@ -32,6 +32,7 @@ import {
   validateCep,
   validateAccount,
 } from '../utils/formatters';
+import config from '../config/index';
 import './EssencialForm.css';
 
 // Importações dos ícones
@@ -362,7 +363,7 @@ const UserForm: React.FC = () => {
     if (cleanCep.length === 8) {
       setSearchingCep(true);
       try {
-        const response = await fetch(`http://localhost:8080/api/cep/${cleanCep}`);
+        const response = await fetch(`${config.apiUrl}/api/cep/${cleanCep}`);
         const data = await response.json();
         
         if (data.success) {
@@ -546,7 +547,7 @@ const UserForm: React.FC = () => {
       }
       
       // Enviar dados para o backend
-      const response = await fetch('http://localhost:8080/api/users', {
+      const response = await fetch(`${config.apiUrl}/api/users`, {
         method: 'POST',
         body: formDataToSend, // FormData não precisa do Content-Type header
       });

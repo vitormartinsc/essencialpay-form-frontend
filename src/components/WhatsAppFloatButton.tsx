@@ -1,4 +1,3 @@
-import React from 'react';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { Fab, Tooltip } from '@mui/material';
 
