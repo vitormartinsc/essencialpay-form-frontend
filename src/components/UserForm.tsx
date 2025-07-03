@@ -15,7 +15,10 @@ import {
   Radio,
   RadioGroup,
   FormControlLabel,
+  Link,
+  Checkbox,
 } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 import type { FormData, FormErrors } from '../types';
 import {
@@ -190,6 +193,7 @@ const UserForm: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
   const [searchingCep, setSearchingCep] = useState(false);
   const [showValidationAlert, setShowValidationAlert] = useState(false);
+  const [consentAccepted, setConsentAccepted] = useState(false);
 
   // Função para criar mensagens de erro amigáveis
   const getErrorMessages = (errors: FormErrors): string[] => {
@@ -502,6 +506,12 @@ const UserForm: React.FC = () => {
     e.preventDefault();
     
     const validationErrors = validateForm();
+    
+    // Verificar se o consentimento foi aceito
+    if (!consentAccepted) {
+      validationErrors.consent = 'Você deve aceitar os termos de uso e política de privacidade';
+    }
+    
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       setShowValidationAlert(true);
@@ -1156,7 +1166,7 @@ const UserForm: React.FC = () => {
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
           <Box sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#e3f2fd', padding: '20px 15px 15px 15px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', minWidth: 0, width: { xs: 180, sm: 200 }, minHeight: 0, height: 'auto' }}>
             <Typography variant="body2" sx={{ mb: 1.5, color: '#0056FF', fontWeight: 'bold', fontSize: '0.9rem', textAlign: 'center', lineHeight: 1.3 }}>Comprovante de Residência</Typography>
-            <Box sx={{ width: '70px', height: '70px', backgroundColor: '#f8f9fa', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5, mt: 0.5 }}>
+            <Box sx={{ width: '70px', height: '70px', backgroundColor: '#f9f9f9', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5, mt: 0.5 }}>
               <img src={comprovanteResidencia} alt="Comprovante de Residência" style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
             </Box>
             {!formData.residenceProof ? (
@@ -1234,6 +1244,51 @@ const UserForm: React.FC = () => {
           </Alert>
         )}
 
+        {/* Consentimento */}
+        <Box sx={{ mt: 2, mb: 2 }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={consentAccepted}
+                onChange={(e) => setConsentAccepted(e.target.checked)}
+                sx={{
+                  color: errors.consent ? '#d32f2f' : '#0033ff',
+                  '&.Mui-checked': {
+                    color: '#0033ff',
+                  },
+                }}
+              />
+            }
+            label={
+              <Typography variant="body2" sx={{ color: errors.consent ? '#d32f2f' : '#555' }}>
+                Eu li e concordo com os{' '}
+                <Link
+                  component={RouterLink}
+                  to="/termos-de-uso"
+                  target="_blank"
+                  sx={{ color: '#0033ff', textDecoration: 'underline' }}
+                >
+                  Termos de Uso
+                </Link>{' '}
+                e a{' '}
+                <Link
+                  component={RouterLink}
+                  to="/politica-de-privacidade"
+                  target="_blank"
+                  sx={{ color: '#0033ff', textDecoration: 'underline' }}
+                >
+                  Política de Privacidade
+                </Link>
+              </Typography>
+            }
+          />
+          {errors.consent && (
+            <Typography variant="body2" sx={{ color: '#d32f2f', mt: 1, ml: 4 }}>
+              {errors.consent}
+            </Typography>
+          )}
+        </Box>
+
         <Button
           fullWidth
           variant="contained"
@@ -1271,27 +1326,12 @@ const UserForm: React.FC = () => {
           variant="body2" 
           sx={{ 
             mt: 3, 
-            color: '#0033ff', 
+            color: '#666', 
             textAlign: 'center', 
             fontSize: '0.9rem',
-            '& a': {
-              color: '#0033ff',
-              textDecoration: 'none',
-              '&:hover': {
-                textDecoration: 'underline',
-              },
-            },
           }}
         >
-          Ao enviar este formulário, você concorda com nossos{' '}
-          <a href="#" onClick={(e) => e.preventDefault()}>
-            termos de uso
-          </a>{' '}
-          e{' '}
-          <a href="#" onClick={(e) => e.preventDefault()}>
-            política de privacidade
-          </a>
-          .
+          Seus dados serão tratados com segurança e confidencialidade.
         </Typography>
       </Box>
     </Paper>

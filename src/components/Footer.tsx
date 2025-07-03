@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Link } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 import EssencialLogo from './EssencialLogo';
 
 const Footer: React.FC = () => {
@@ -102,6 +103,40 @@ const Footer: React.FC = () => {
           >
             Av. do Contorno, 6321 – São Pedro Belo Horizonte/MG, Brasil
           </Typography>
+
+          {/* Links para Termos e Política */}
+          <Box sx={{ mt: 2, display: 'flex', gap: 3, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <Link
+              component={RouterLink}
+              to="/termos-de-uso"
+              sx={{
+                color: '#ffffff',
+                fontSize: '12px',
+                fontFamily: '"Poppins", "Roboto", "Helvetica", "Arial", sans-serif',
+                textDecoration: 'underline',
+                '&:hover': {
+                  color: '#cccccc',
+                },
+              }}
+            >
+              Termos de Uso
+            </Link>
+            <Link
+              component={RouterLink}
+              to="/politica-de-privacidade"
+              sx={{
+                color: '#ffffff',
+                fontSize: '12px',
+                fontFamily: '"Poppins", "Roboto", "Helvetica", "Arial", sans-serif',
+                textDecoration: 'underline',
+                '&:hover': {
+                  color: '#cccccc',
+                },
+              }}
+            >
+              Política de Privacidade
+            </Link>
+          </Box>
         </Box>
       </Box>
     </Box>

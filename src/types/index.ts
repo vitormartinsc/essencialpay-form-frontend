@@ -46,4 +46,6 @@ export interface FormErrors {
   documentFront?: string;
   documentBack?: string;
   residenceProof?: string;
+  // Consentimento
+  consent?: string;
 }

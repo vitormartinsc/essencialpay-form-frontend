@@ -4,6 +4,8 @@ import UserForm from './components/UserForm'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import WhatsAppFloatButton from './components/WhatsAppFloatButton'
+import TermsOfUse from './components/TermsOfUse'
+import PrivacyPolicy from './components/PrivacyPolicy'
 import './App.css'
 
 const theme = createTheme({
@@ -73,6 +75,8 @@ function App() {
             <Routes>
               <Route path="/" element={<Navigate to="/cadastro" replace />} />
               <Route path="/cadastro" element={<UserForm />} />
+              <Route path="/termos-de-uso" element={<TermsOfUse />} />
+              <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
             </Routes>
           </div>
           <Footer />
