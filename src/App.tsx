@@ -1,4 +1,5 @@
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import UserForm from './components/UserForm'
 import Header from './components/Header'
 import Footer from './components/Footer'
@@ -43,36 +44,41 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <div style={{ 
-        minHeight: '100vh', 
-        backgroundColor: '#0033ff',
-        margin: 0,
-        padding: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}>
-        <Header />
-        <div style={{
-          width: '100%',
-          maxWidth: '800px',
-          backgroundColor: 'transparent',
-          padding: '10px',
-          borderRadius: '8px',
-          margin: '0 auto',
-          position: 'relative',
-          boxSizing: 'border-box',
-          flex: 1,
+      <Router>
+        <div style={{ 
+          minHeight: '100vh', 
+          backgroundColor: '#0033ff',
+          margin: 0,
+          padding: 0,
           display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'flex-start',
-          paddingTop: '20px',
+          flexDirection: 'column',
+          alignItems: 'center',
         }}>
-          <UserForm />
+          <Header />
+          <div style={{
+            width: '100%',
+            maxWidth: '800px',
+            backgroundColor: 'transparent',
+            padding: '10px',
+            borderRadius: '8px',
+            margin: '0 auto',
+            position: 'relative',
+            boxSizing: 'border-box',
+            flex: 1,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+            paddingTop: '20px',
+          }}>
+            <Routes>
+              <Route path="/" element={<Navigate to="/cadastro" replace />} />
+              <Route path="/cadastro" element={<UserForm />} />
+            </Routes>
+          </div>
+          <Footer />
+          <WhatsAppFloatButton />
         </div>
-        <Footer />
-        <WhatsAppFloatButton />
-      </div>
+      </Router>
     </ThemeProvider>
   )
 }
