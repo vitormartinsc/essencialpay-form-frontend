@@ -257,12 +257,25 @@ const UserForm: React.FC = () => {
 
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Enviar dados para o backend
+      const response = await fetch('http://localhost:3000/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erro HTTP: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('Usuário criado:', result);
       setSubmitted(true);
-      console.log('Form submitted:', formData);
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error('Erro ao enviar formulário:', error);
+      // Você pode adicionar um estado de erro aqui se quiser mostrar uma mensagem ao usuário
     } finally {
       setLoading(false);
     }
