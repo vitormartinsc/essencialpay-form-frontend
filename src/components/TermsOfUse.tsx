@@ -6,7 +6,18 @@ export default function TermsOfUse() {
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
-      <Box sx={{ backgroundColor: 'white', p: 4, borderRadius: 2, boxShadow: 2 }}>
+      <Box sx={{ 
+        backgroundColor: 'white', 
+        p: 4, 
+        borderRadius: 2, 
+        boxShadow: 2,
+        '& .MuiTypography-body1': {
+          color: '#333',
+        },
+        '& .MuiTypography-body2': {
+          color: '#666',
+        }
+      }}>
         <Typography variant="h3" component="h1" gutterBottom sx={{ color: '#0033ff', textAlign: 'center' }}>
           Termos de Uso
         </Typography>
