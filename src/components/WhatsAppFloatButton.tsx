@@ -1,7 +1,7 @@
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { Fab, Tooltip } from '@mui/material';
 
-const WHATSAPP_NUMBER = '553199942300'; // Número do projeto original
+const WHATSAPP_NUMBER = '5531972254165'; // Número do projeto original
 const WHATSAPP_MSG = encodeURIComponent('Olá! Quero saber mais sobre o cadastro Essencial.');
 const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MSG}`;
 
