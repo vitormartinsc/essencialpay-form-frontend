@@ -12,7 +12,11 @@ import {
   CircularProgress,
   Alert,
   Paper,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import type { FormData, FormErrors } from '../types';
 import {
   formatCpf,
@@ -26,9 +30,14 @@ import {
   validateEmail,
   validatePhone,
   validateCep,
-  validatePixKey,
 } from '../utils/formatters';
 import './EssencialForm.css';
+
+// Importações dos ícones
+import idFrente from '../assets/id_frente.svg';
+import idVerso from '../assets/id_verso.svg';
+import cnhImage from '../assets/cnh.svg';
+import comprovanteResidencia from '../assets/comprovante_residencia.png';
 
 // Lista dos principais bancos brasileiros
 const BRAZILIAN_BANKS = [
@@ -80,7 +89,7 @@ const UserForm: React.FC = () => {
     mt: 1,
     mb: 1,
     width: '100%',
-    maxWidth: '400px',
+    maxWidth: '500px', // Aumentado de 400px para 500px
     '& .MuiInputBase-root': {
       height: '56px', // Altura fixa padronizada para todos os campos
       fontSize: '1rem',
@@ -168,7 +177,9 @@ const UserForm: React.FC = () => {
     accountType: '',
     agency: '',
     account: '',
-    identityDocument: null,
+    documentType: 'RG',
+    documentFront: null,
+    documentBack: null,
     residenceProof: null,
   });
 
@@ -176,6 +187,23 @@ const UserForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [searchingCep, setSearchingCep] = useState(false);
+
+  // Função utilitária para validar imagem
+  const isValidImage = (file: File) => {
+    if (!file) return false;
+    const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+    return validTypes.includes(file.type);
+  };
+
+  const handleDocumentTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newDocumentType = event.target.value;
+    setFormData(prev => ({
+      ...prev,
+      documentType: newDocumentType,
+      documentFront: null,
+      documentBack: null,
+    }));
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -217,6 +245,54 @@ const UserForm: React.FC = () => {
         ...prev,
         [name]: undefined,
       }));
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, files } = e.target;
+    if (files && files[0]) {
+      const file = files[0];
+      
+      // Para documentos, só aceita imagens
+      if (name === 'documentFront' || name === 'documentBack') {
+        if (!isValidImage(file)) {
+          alert('Por favor, selecione uma imagem válida (PNG, JPG, JPEG, WEBP).');
+          return;
+        }
+      } else {
+        // Para comprovante de residência, aceita PDF também
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp', 'application/pdf'];
+        if (!allowedTypes.includes(file.type)) {
+          setErrors(prev => ({
+            ...prev,
+            [name]: 'Apenas arquivos PNG, JPG, JPEG, WEBP ou PDF são permitidos',
+          }));
+          return;
+        }
+      }
+
+      // Validar tamanho do arquivo (máximo 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        setErrors(prev => ({
+          ...prev,
+          [name]: 'Arquivo muito grande. Máximo 5MB.',
+        }));
+        return;
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        [name]: file,
+      }));
+
+      // Clear error when user selects a valid file
+      if (errors[name as keyof FormErrors]) {
+        setErrors(prev => ({
+          ...prev,
+          [name]: undefined,
+        }));
+      }
     }
   };
 
@@ -354,9 +430,22 @@ const UserForm: React.FC = () => {
       newErrors.account = 'Conta é obrigatória';
     }
 
-    // PIX é opcional, mas se preenchido deve ser válido
-    if (formData.pixKey && !validatePixKey(formData.pixKey)) {
-      newErrors.pixKey = 'Chave PIX inválida';
+    // Validação dos documentos
+    if (formData.documentType === 'RG') {
+      if (!formData.documentFront) {
+        newErrors.documentFront = 'Obrigatório enviar a frente do RG';
+      }
+      if (!formData.documentBack) {
+        newErrors.documentBack = 'Obrigatório enviar o verso do RG';
+      }
+    } else if (formData.documentType === 'CNH') {
+      if (!formData.documentFront) {
+        newErrors.documentFront = 'Obrigatório enviar a foto da CNH';
+      }
+    }
+
+    if (!formData.residenceProof) {
+      newErrors.residenceProof = 'Comprovante de residência é obrigatório';
     }
 
     return newErrors;
@@ -441,7 +530,7 @@ const UserForm: React.FC = () => {
         borderRadius: '8px',
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         width: '100%',
-        maxWidth: '400px',
+        maxWidth: '450px', // Ajustado para 450px
         margin: '0 auto',
         boxSizing: 'border-box',
       }}
@@ -759,19 +848,262 @@ const UserForm: React.FC = () => {
           </Box>
         </Box>
 
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Chave PIX (Opcional)"
-          name="pixKey"
-          value={formData.pixKey}
-          onChange={handleChange}
-          error={!!errors.pixKey}
-          helperText={errors.pixKey || 'CPF, email, telefone ou chave aleatória'}
-          placeholder="Sua chave PIX"
-          InputLabelProps={labelProps}
-          sx={fieldStyles}
-        />
+        {/* Documentos */}
+        <Typography variant="h6" sx={{ color: '#0033ff', mb: 2, mt: 3, fontSize: '1.1rem', fontWeight: 600, textAlign: 'center' }}>
+          Documento e Comprovante de Residência
+        </Typography>
+
+        <RadioGroup
+          row
+          value={formData.documentType}
+          onChange={handleDocumentTypeChange}
+          sx={{ justifyContent: 'center', mb: 4, gap: 2 }}
+        >
+          <FormControlLabel
+            value="RG"
+            control={<Radio sx={{ color: '#0033ff' }} />}
+            label="Vou enviar meu RG"
+            sx={{ color: '#0033ff', fontWeight: '500' }}
+          />
+          <FormControlLabel
+            value="CNH"
+            control={<Radio sx={{ color: '#0033ff' }} />}
+            label="Vou enviar minha CNH"
+            sx={{ color: '#0033ff', fontWeight: '500' }}
+          />
+        </RadioGroup>
+
+        {formData.documentType === 'RG' ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: { xs: 1, sm: 3 }, mb: 2, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+            <Box sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#e3f2fd', padding: '20px 15px 15px 15px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', minWidth: 0, width: { xs: 180, sm: 200 }, minHeight: 0, height: 'auto' }}>
+              <Typography variant="body2" sx={{ mb: 1.5, color: '#0056FF', fontWeight: 'bold', fontSize: '0.9rem', textAlign: 'center', lineHeight: 1.3 }}>Foto da frente da Identidade</Typography>
+              <Box sx={{ width: '70px', height: '70px', backgroundColor: '#f8f9fa', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5, mt: 0.5 }}>
+                <img src={idFrente} alt="RG Frente" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
+              </Box>
+              {!formData.documentFront ? (
+                <Button variant="contained" component="label" sx={{ backgroundColor: '#0056FF', color: '#fff', fontWeight: 'bold', textTransform: 'none', borderRadius: '8px', minWidth: 90, height: 34, px: 2, py: 0, fontSize: 14, whiteSpace: 'nowrap', display: 'flex', alignSelf: 'center', justifyContent: 'center', mb: 1, '&:hover': { backgroundColor: '#003f8a' } }}>
+                  Enviar
+                  <input 
+                    type="file" 
+                    accept="image/png, image/jpeg, image/jpg, image/webp" 
+                    name="documentFront" 
+                    onChange={handleFileChange}
+                    style={{ 
+                      display: 'none',
+                      opacity: 0,
+                      position: 'absolute',
+                      zIndex: -1,
+                      width: 0,
+                      height: 0,
+                      overflow: 'hidden'
+                    }}
+                  />
+                </Button>
+              ) : (
+                <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1, background: '#f5f7fa', borderRadius: '6px', px: 1, py: 0.5, width: '100%' }}>
+                  <Typography
+                    sx={{
+                      fontFamily: 'Inter, Roboto, Arial, sans-serif',
+                      color: '#0056FF',
+                      fontWeight: 500,
+                      fontSize: 14,
+                      letterSpacing: 0.2,
+                      cursor: 'pointer',
+                      marginRight: 1,
+                      userSelect: 'text',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      flex: 1,
+                    }}
+                  >
+                    {formData.documentFront.name}
+                  </Typography>
+                  <CloseIcon
+                    sx={{ cursor: 'pointer', color: '#b71c1c', fontSize: 18, ml: 0.5 }}
+                    onClick={() => setFormData(prev => ({ ...prev, documentFront: null }))}
+                  />
+                </Box>
+              )}
+              {!formData.documentFront && errors.documentFront && (
+                <Typography variant="caption" color="error" sx={{ mt: 1, mb: 1, display: 'block' }}>{errors.documentFront}</Typography>
+              )}
+            </Box>
+            <Box sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#e3f2fd', padding: '20px 15px 15px 15px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', minWidth: 0, width: { xs: 180, sm: 200 }, minHeight: 0, height: 'auto' }}>
+              <Typography variant="body2" sx={{ mb: 1.5, color: '#0056FF', fontWeight: 'bold', fontSize: '0.9rem', textAlign: 'center', lineHeight: 1.3 }}>Foto do verso da Identidade</Typography>
+              <Box sx={{ width: '70px', height: '70px', backgroundColor: '#f8f9fa', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5, mt: 0.5 }}>
+                <img src={idVerso} alt="RG Verso" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
+              </Box>
+              {!formData.documentBack ? (
+                <Button variant="contained" component="label" sx={{ backgroundColor: '#0056FF', color: '#fff', fontWeight: 'bold', textTransform: 'none', borderRadius: '8px', minWidth: 90, height: 34, px: 2, py: 0, fontSize: 14, whiteSpace: 'nowrap', display: 'flex', alignSelf: 'center', justifyContent: 'center', mb: 1, '&:hover': { backgroundColor: '#003f8a' } }}>
+                  Enviar
+                  <input 
+                    type="file" 
+                    accept="image/png, image/jpeg, image/jpg, image/webp" 
+                    name="documentBack" 
+                    onChange={handleFileChange}
+                    style={{ 
+                      display: 'none',
+                      opacity: 0,
+                      position: 'absolute',
+                      zIndex: -1,
+                      width: 0,
+                      height: 0,
+                      overflow: 'hidden'
+                    }}
+                  />
+                </Button>
+              ) : (
+                <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1, background: '#f5f7fa', borderRadius: '6px', px: 1, py: 0.5, width: '100%' }}>
+                  <Typography
+                    sx={{
+                      fontFamily: 'Inter, Roboto, Arial, sans-serif',
+                      color: '#0056FF',
+                      fontWeight: 500,
+                      fontSize: 14,
+                      letterSpacing: 0.2,
+                      cursor: 'pointer',
+                      marginRight: 1,
+                      userSelect: 'text',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      flex: 1,
+                    }}
+                  >
+                    {formData.documentBack.name}
+                  </Typography>
+                  <CloseIcon
+                    sx={{ cursor: 'pointer', color: '#b71c1c', fontSize: 18, ml: 0.5 }}
+                    onClick={() => setFormData(prev => ({ ...prev, documentBack: null }))}
+                  />
+                </Box>
+              )}
+              {!formData.documentBack && errors.documentBack && (
+                <Typography variant="caption" color="error" sx={{ mt: 1, mb: 1, display: 'block' }}>{errors.documentBack}</Typography>
+              )}
+            </Box>
+          </Box>
+        ) : (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+            <Box sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#e3f2fd', padding: '20px 15px 15px 15px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', minWidth: 0, width: { xs: 180, sm: 200 }, minHeight: 0, height: 'auto' }}>
+              <Typography variant="body2" sx={{ mb: 1.5, color: '#0056FF', fontWeight: 'bold', fontSize: '0.9rem', textAlign: 'center', lineHeight: 1.3 }}>Foto da CNH</Typography>
+              <Box sx={{ width: '70px', height: '70px', backgroundColor: '#f8f9fa', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5, mt: 0.5 }}>
+                <img src={cnhImage} alt="CNH" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
+              </Box>
+              {!formData.documentFront ? (
+                <Button variant="contained" component="label" sx={{ backgroundColor: '#0056FF', color: '#fff', fontWeight: 'bold', textTransform: 'none', borderRadius: '8px', minWidth: 90, height: 34, px: 2, py: 0, fontSize: 14, whiteSpace: 'nowrap', display: 'flex', alignSelf: 'center', justifyContent: 'center', mb: 1, '&:hover': { backgroundColor: '#003f8a' } }}>
+                  Enviar
+                  <input 
+                    type="file" 
+                    accept="image/png, image/jpeg, image/jpg, image/webp" 
+                    name="documentFront" 
+                    onChange={handleFileChange}
+                    style={{ 
+                      display: 'none',
+                      opacity: 0,
+                      position: 'absolute',
+                      zIndex: -1,
+                      width: 0,
+                      height: 0,
+                      overflow: 'hidden'
+                    }}
+                  />
+                </Button>
+              ) : (
+                <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1, background: '#f5f7fa', borderRadius: '6px', px: 1, py: 0.5, width: '100%' }}>
+                  <Typography
+                    sx={{
+                      fontFamily: 'Inter, Roboto, Arial, sans-serif',
+                      color: '#0056FF',
+                      fontWeight: 500,
+                      fontSize: 14,
+                      letterSpacing: 0.2,
+                      cursor: 'pointer',
+                      marginRight: 1,
+                      userSelect: 'text',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      flex: 1,
+                    }}
+                  >
+                    {formData.documentFront.name}
+                  </Typography>
+                  <CloseIcon
+                    sx={{ cursor: 'pointer', color: '#b71c1c', fontSize: 18, ml: 0.5 }}
+                    onClick={() => setFormData(prev => ({ ...prev, documentFront: null }))}
+                  />
+                </Box>
+              )}
+              {!formData.documentFront && errors.documentFront && (
+                <Typography variant="caption" color="error" sx={{ mt: 1, mb: 1, display: 'block' }}>{errors.documentFront}</Typography>
+              )}
+            </Box>
+          </Box>
+        )}
+
+        {/* Comprovante de Residência */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <Box sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#e3f2fd', padding: '20px 15px 15px 15px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', minWidth: 0, width: { xs: 180, sm: 200 }, minHeight: 0, height: 'auto' }}>
+            <Typography variant="body2" sx={{ mb: 1.5, color: '#0056FF', fontWeight: 'bold', fontSize: '0.9rem', textAlign: 'center', lineHeight: 1.3 }}>Comprovante de Residência</Typography>
+            <Box sx={{ width: '70px', height: '70px', backgroundColor: '#f8f9fa', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5, mt: 0.5 }}>
+              <img src={comprovanteResidencia} alt="Comprovante de Residência" style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
+            </Box>
+            {!formData.residenceProof ? (
+              <Button variant="contained" component="label" sx={{ backgroundColor: '#0056FF', color: '#fff', fontWeight: 'bold', textTransform: 'none', borderRadius: '8px', minWidth: 90, height: 34, px: 2, py: 0, fontSize: 14, whiteSpace: 'nowrap', display: 'flex', alignSelf: 'center', justifyContent: 'center', mb: 1, '&:hover': { backgroundColor: '#003f8a' } }}>
+                Enviar
+                <input 
+                  type="file" 
+                  accept="image/png, image/jpeg, image/jpg, image/webp, application/pdf" 
+                  name="residenceProof" 
+                  onChange={handleFileChange}
+                  style={{ 
+                    display: 'none',
+                    opacity: 0,
+                    position: 'absolute',
+                    zIndex: -1,
+                    width: 0,
+                    height: 0,
+                    overflow: 'hidden'
+                  }}
+                />
+              </Button>
+            ) : (
+              <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1, background: '#f5f7fa', borderRadius: '6px', px: 1, py: 0.5, width: '100%' }}>
+                <Typography
+                  sx={{
+                    fontFamily: 'Inter, Roboto, Arial, sans-serif',
+                    color: '#0056FF',
+                    fontWeight: 500,
+                    fontSize: 14,
+                    letterSpacing: 0.2,
+                    cursor: 'pointer',
+                    marginRight: 1,
+                    userSelect: 'text',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    flex: 1,
+                  }}
+                >
+                  {formData.residenceProof.name}
+                </Typography>
+                <CloseIcon
+                  sx={{ cursor: 'pointer', color: '#b71c1c', fontSize: 18, ml: 0.5 }}
+                  onClick={() => setFormData(prev => ({ ...prev, residenceProof: null }))}
+                />
+              </Box>
+            )}
+            {!formData.residenceProof && errors.residenceProof && (
+              <Typography variant="caption" color="error" sx={{ mt: 1, mb: 1, display: 'block' }}>{errors.residenceProof}</Typography>
+            )}
+          </Box>
+        </Box>
+
+        <Typography variant="caption" sx={{ color: '#666', mt: 2, display: 'block', textAlign: 'center' }}>
+          Formatos aceitos: PNG, JPG, JPEG, WEBP (documentos) | PDF, PNG, JPG, JPEG, WEBP (comprovante)
+        </Typography>
 
         <Button
           fullWidth

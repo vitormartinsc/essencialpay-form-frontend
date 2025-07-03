@@ -16,7 +16,11 @@ export interface FormData {
   accountType: string;
   agency: string;
   account: string;
-  pixKey?: string;
+  // Documentos
+  documentType: string;
+  documentFront: File | null;
+  documentBack: File | null;
+  residenceProof: File | null;
 }
 
 export interface FormErrors {
@@ -37,5 +41,9 @@ export interface FormErrors {
   accountType?: string;
   agency?: string;
   account?: string;
-  pixKey?: string;
+  // Documentos
+  documentType?: string;
+  documentFront?: string;
+  documentBack?: string;
+  residenceProof?: string;
 }
