@@ -1,6 +1,7 @@
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material'
 import UserForm from './components/UserForm'
 import Header from './components/Header'
+import Footer from './components/Footer'
 import WhatsAppFloatButton from './components/WhatsAppFloatButton'
 import './App.css'
 
@@ -69,6 +70,7 @@ function App() {
         }}>
           <UserForm />
         </div>
+        <Footer />
         <WhatsAppFloatButton />
       </div>
     </ThemeProvider>

@@ -30,6 +30,7 @@ import {
   validateEmail,
   validatePhone,
   validateCep,
+  validateAccount,
 } from '../utils/formatters';
 import './EssencialForm.css';
 
@@ -187,6 +188,33 @@ const UserForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [searchingCep, setSearchingCep] = useState(false);
+  const [showValidationAlert, setShowValidationAlert] = useState(false);
+
+  // Função para criar mensagens de erro amigáveis
+  const getErrorMessages = (errors: FormErrors): string[] => {
+    const messages: string[] = [];
+    
+    if (errors.fullName) messages.push('• Nome completo é obrigatório');
+    if (errors.cpf) messages.push('• CPF inválido ou não preenchido');
+    if (errors.cnpj) messages.push('• CNPJ inválido');
+    if (errors.email) messages.push('• Email inválido ou não preenchido');
+    if (errors.phone) messages.push('• Telefone inválido ou não preenchido');
+    if (errors.cep) messages.push('• CEP inválido ou não preenchido');
+    if (errors.state) messages.push('• Estado é obrigatório');
+    if (errors.city) messages.push('• Cidade é obrigatória');
+    if (errors.neighborhood) messages.push('• Bairro é obrigatório');
+    if (errors.street) messages.push('• Rua é obrigatória');
+    if (errors.number) messages.push('• Número é obrigatório');
+    if (errors.bankName) messages.push('• Nome do banco é obrigatório');
+    if (errors.accountType) messages.push('• Tipo de conta é obrigatório');
+    if (errors.agency) messages.push('• Agência é obrigatória');
+    if (errors.account) messages.push('• Conta bancária inválida ou não preenchida');
+    if (errors.documentFront) messages.push('• Documento obrigatório não enviado');
+    if (errors.documentBack) messages.push('• Verso do documento obrigatório não enviado');
+    if (errors.residenceProof) messages.push('• Comprovante de residência obrigatório');
+    
+    return messages;
+  };
 
   // Função utilitária para validar imagem
   const isValidImage = (file: File) => {
@@ -246,6 +274,32 @@ const UserForm: React.FC = () => {
         [name]: undefined,
       }));
     }
+
+    // Hide validation alert when user starts fixing errors
+    if (showValidationAlert) {
+      setShowValidationAlert(false);
+    }
+  };
+
+  const handleSelectChange = (e: any) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    // Clear error when user selects a value
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined,
+      }));
+    }
+
+    // Hide validation alert when user starts fixing errors
+    if (showValidationAlert) {
+      setShowValidationAlert(false);
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -293,21 +347,11 @@ const UserForm: React.FC = () => {
           [name]: undefined,
         }));
       }
-    }
-  };
 
-  const handleSelectChange = (event: any) => {
-    const { name, value } = event.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    if (errors[name as keyof FormErrors]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: undefined,
-      }));
+      // Hide validation alert when user starts fixing errors
+      if (showValidationAlert) {
+        setShowValidationAlert(false);
+      }
     }
   };
 
@@ -318,7 +362,7 @@ const UserForm: React.FC = () => {
     if (cleanCep.length === 8) {
       setSearchingCep(true);
       try {
-        const response = await fetch(`http://localhost:3000/api/cep/${cleanCep}`);
+        const response = await fetch(`http://localhost:8080/api/cep/${cleanCep}`);
         const data = await response.json();
         
         if (data.success) {
@@ -428,6 +472,8 @@ const UserForm: React.FC = () => {
 
     if (!formData.account.trim()) {
       newErrors.account = 'Conta é obrigatória';
+    } else if (!validateAccount(formData.account)) {
+      newErrors.account = 'Conta deve ter entre 6 e 7 dígitos';
     }
 
     // Validação dos documentos
@@ -457,18 +503,52 @@ const UserForm: React.FC = () => {
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      setShowValidationAlert(true);
+      // Scroll to top to show the error alert
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
+    setShowValidationAlert(false);
     setLoading(true);
     try {
+      // Criar FormData para enviar arquivos junto com os dados
+      const formDataToSend = new FormData();
+      
+      // Adicionar todos os campos de texto
+      formDataToSend.append('fullName', formData.fullName);
+      formDataToSend.append('cpf', formData.cpf);
+      formDataToSend.append('cnpj', formData.cnpj || '');
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('phone', formData.phone);
+      formDataToSend.append('cep', formData.cep);
+      formDataToSend.append('state', formData.state);
+      formDataToSend.append('city', formData.city);
+      formDataToSend.append('neighborhood', formData.neighborhood);
+      formDataToSend.append('street', formData.street);
+      formDataToSend.append('number', formData.number);
+      formDataToSend.append('complement', formData.complement || '');
+      formDataToSend.append('bankName', formData.bankName);
+      formDataToSend.append('accountType', formData.accountType);
+      formDataToSend.append('agency', formData.agency);
+      formDataToSend.append('account', formData.account);
+      formDataToSend.append('documentType', formData.documentType);
+      
+      // Adicionar arquivos se existirem
+      if (formData.documentFront) {
+        formDataToSend.append('documentFront', formData.documentFront);
+      }
+      if (formData.documentBack) {
+        formDataToSend.append('documentBack', formData.documentBack);
+      }
+      if (formData.residenceProof) {
+        formDataToSend.append('residenceProof', formData.residenceProof);
+      }
+      
       // Enviar dados para o backend
-      const response = await fetch('http://localhost:3000/api/users', {
+      const response = await fetch('http://localhost:8080/api/users', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        body: formDataToSend, // FormData não precisa do Content-Type header
       });
 
       if (!response.ok) {
@@ -476,7 +556,7 @@ const UserForm: React.FC = () => {
       }
 
       const result = await response.json();
-      console.log('Usuário criado:', result);
+      console.log('Usuário e documentos criados:', result);
       setSubmitted(true);
     } catch (error) {
       console.error('Erro ao enviar formulário:', error);
@@ -549,6 +629,33 @@ const UserForm: React.FC = () => {
       >
         Cadastro Essencial
       </Typography>
+
+      {showValidationAlert && (
+        <Alert 
+          severity="error" 
+          sx={{ 
+            mt: 2, 
+            mb: 3, 
+            background: '#ffebee', 
+            color: '#c62828', 
+            border: '1px solid #f44336', 
+            fontWeight: 500, 
+            borderRadius: '8px',
+            boxShadow: '0 2px 8px 0 rgba(0,0,0,0.1)' 
+          }}
+        >
+          <Typography variant="h6" gutterBottom sx={{ color: '#c62828' }}>
+            Atenção! Existem campos obrigatórios não preenchidos:
+          </Typography>
+          <Box component="ul" sx={{ pl: 0, m: 0 }}>
+            {getErrorMessages(errors).map((message, index) => (
+              <Typography key={index} variant="body2" sx={{ mb: 0.5 }}>
+                {message}
+              </Typography>
+            ))}
+          </Box>
+        </Alert>
+      )}
 
       <Alert 
         severity="info" 
@@ -681,6 +788,7 @@ const UserForm: React.FC = () => {
               onChange={handleChange}
               error={!!errors.state}
               helperText={errors.state}
+              placeholder="Ex: SP, RJ, MG"
               InputLabelProps={labelProps}
               sx={fieldStyles}
             />
@@ -841,7 +949,7 @@ const UserForm: React.FC = () => {
               onChange={handleChange}
               error={!!errors.account}
               helperText={errors.account}
-              placeholder="00000-0"
+              placeholder="000000-0"
               InputLabelProps={labelProps}
               sx={fieldStyles}
             />
@@ -1104,6 +1212,26 @@ const UserForm: React.FC = () => {
         <Typography variant="caption" sx={{ color: '#666', mt: 2, display: 'block', textAlign: 'center' }}>
           Formatos aceitos: PNG, JPG, JPEG, WEBP (documentos) | PDF, PNG, JPG, JPEG, WEBP (comprovante)
         </Typography>
+
+        {showValidationAlert && (
+          <Alert 
+            severity="warning" 
+            sx={{ 
+              mt: 3, 
+              mb: 2, 
+              background: '#fff3e0', 
+              color: '#ef6c00', 
+              border: '1px solid #ff9800', 
+              fontWeight: 500, 
+              borderRadius: '8px',
+              boxShadow: '0 2px 8px 0 rgba(0,0,0,0.1)' 
+            }}
+          >
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+              ⚠️ Revise os campos destacados em vermelho antes de enviar
+            </Typography>
+          </Alert>
+        )}
 
         <Button
           fullWidth

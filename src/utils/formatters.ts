@@ -130,10 +130,22 @@ export const formatAgency = (value: string): string => {
 };
 
 /**
- * Format account input to allow digits and dash
+ * Format account input to XXXXXX-X pattern (6 digits + dash + 1 check digit)
  */
 export const formatAccount = (value: string): string => {
-  return value.replace(/[^0-9-]/g, '').slice(0, 15);
+  const onlyDigits = value.replace(/\D/g, '').slice(0, 7);
+  if (onlyDigits.length > 6) {
+    return onlyDigits.slice(0, 6) + '-' + onlyDigits.slice(6);
+  }
+  return onlyDigits;
+};
+
+/**
+ * Validate account number format
+ */
+export const validateAccount = (account: string): boolean => {
+  const cleanAccount = account.replace(/\D/g, '');
+  return cleanAccount.length >= 6 && cleanAccount.length <= 7;
 };
 
 /**
