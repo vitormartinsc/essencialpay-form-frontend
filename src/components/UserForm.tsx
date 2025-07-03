@@ -30,6 +30,50 @@ import {
 } from '../utils/formatters';
 import './EssencialForm.css';
 
+// Lista dos principais bancos brasileiros
+const BRAZILIAN_BANKS = [
+  'Banco do Brasil',
+  'Itaú',
+  'Bradesco',
+  'Caixa Econômica Federal',
+  'Santander',
+  'Banco Inter',
+  'Nubank',
+  'BTG Pactual',
+  'Safra',
+  'Banco Original',
+  'Banco Pan',
+  'Banco BMG',
+  'Banco Daycoval',
+  'Banco Pine',
+  'Banco Mercantil do Brasil',
+  'Banco Sofisa',
+  'Banco Votorantim',
+  'C6 Bank',
+  'Neon',
+  'Next',
+  'Banco Modal',
+  'Banco Fibra',
+  'Banco Rendimento',
+  'Banco Industrial do Brasil',
+  'Banco Paulista',
+  'Banco Topázio',
+  'Banco Alfa',
+  'Banco Bonsucesso',
+  'Banco Máxima',
+  'Banco Ourinvest',
+  'PagBank',
+  'Banco do Nordeste',
+  'Banco da Amazônia',
+  'BRDE',
+  'Banco de Brasília',
+  'Banrisul',
+  'Banestes',
+  'Banco Cooperativo Sicredi',
+  'Unicred',
+  'Outros'
+].sort();
+
 const UserForm: React.FC = () => {
   // Standard styling for form fields following the original project design
   const fieldStyles = {
@@ -38,22 +82,22 @@ const UserForm: React.FC = () => {
     width: '100%',
     maxWidth: '400px',
     '& .MuiInputBase-root': {
-      height: '44px', // Altura fixa para todos os campos
-      fontSize: '1.05rem',
+      height: '56px', // Altura fixa padronizada para todos os campos
+      fontSize: '1rem',
       backgroundColor: '#fff',
       color: '#0033ff',
       border: '1px solid #ccc',
-      borderRadius: '4px',
+      borderRadius: '8px',
       '&:focus-within': {
         border: '1px solid #0033ff',
         boxShadow: '0 0 6px rgba(0, 51, 255, 0.5)',
       },
     },
     '& .MuiInputBase-input': {
-      padding: '10px 8px',
-      height: '24px', // Altura interna consistente
+      padding: '16px 14px',
+      height: 'auto', // Deixa o Material-UI gerenciar a altura interna
       '&::placeholder': {
-        color: '#FFD700',
+        color: '#999',
         opacity: 1,
       },
     },
@@ -61,20 +105,49 @@ const UserForm: React.FC = () => {
       display: 'none',
     },
     '& .MuiSelect-select': {
-      padding: '10px 8px',
-      height: '24px',
+      padding: '16px 14px',
+      height: 'auto',
       display: 'flex',
       alignItems: 'center',
+      minHeight: '24px', // Altura mínima para o conteúdo do select
+    },
+  };
+
+  // Styling específico para campos Select
+  const selectFieldStyles = {
+    ...fieldStyles,
+    '& .MuiInputBase-root': {
+      ...fieldStyles['& .MuiInputBase-root'],
+      minHeight: '56px', // Garante altura mínima
+    },
+    '& .MuiSelect-select': {
+      padding: '16px 14px',
+      height: 'auto',
+      display: 'flex',
+      alignItems: 'center',
+      minHeight: '24px',
+      lineHeight: '1.4375em', // Altura padrão do Material-UI
+    },
+    '& .MuiInputLabel-root': {
+      transform: 'translate(14px, 16px) scale(1)',
+      '&.MuiInputLabel-shrink': {
+        transform: 'translate(14px, -9px) scale(0.75)',
+      },
     },
   };
 
   const labelProps = {
     sx: { 
-      backgroundColor: '#fff', 
-      fontSize: '1.05rem', 
+      fontSize: '1rem', 
       fontWeight: 500, 
       color: '#0033ff',
-      paddingX: '4px'
+      '&.Mui-focused': {
+        color: '#0033ff',
+      },
+      '&.MuiInputLabel-shrink': {
+        backgroundColor: '#fff',
+        paddingX: '4px',
+      }
     }
   };
 
@@ -82,7 +155,6 @@ const UserForm: React.FC = () => {
     fullName: '',
     cpf: '',
     cnpj: '',
-    rg: '',
     email: '',
     phone: '',
     cep: '',
@@ -96,12 +168,14 @@ const UserForm: React.FC = () => {
     accountType: '',
     agency: '',
     account: '',
-    pixKey: '',
+    identityDocument: null,
+    residenceProof: null,
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [searchingCep, setSearchingCep] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -161,6 +235,52 @@ const UserForm: React.FC = () => {
     }
   };
 
+  // Função para buscar dados do CEP
+  const handleCepBlur = async () => {
+    const cleanCep = formData.cep.replace(/\D/g, '');
+    
+    if (cleanCep.length === 8) {
+      setSearchingCep(true);
+      try {
+        const response = await fetch(`http://localhost:3000/api/cep/${cleanCep}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          setFormData(prev => ({
+            ...prev,
+            state: data.data.uf || '',
+            city: data.data.localidade || '',
+            neighborhood: data.data.bairro || '',
+            street: data.data.logradouro || '',
+          }));
+          
+          // Limpar erros relacionados ao endereço
+          setErrors(prev => ({
+            ...prev,
+            cep: undefined,
+            state: undefined,
+            city: undefined,
+            neighborhood: undefined,
+            street: undefined,
+          }));
+        } else {
+          setErrors(prev => ({
+            ...prev,
+            cep: 'CEP não encontrado',
+          }));
+        }
+      } catch (error) {
+        console.error('Erro ao buscar CEP:', error);
+        setErrors(prev => ({
+          ...prev,
+          cep: 'Erro ao buscar CEP',
+        }));
+      } finally {
+        setSearchingCep(false);
+      }
+    }
+  };
+
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
 
@@ -177,10 +297,6 @@ const UserForm: React.FC = () => {
     // CNPJ é opcional, mas se preenchido deve ser válido
     if (formData.cnpj && !validateCnpj(formData.cnpj)) {
       newErrors.cnpj = 'CNPJ inválido';
-    }
-
-    if (!formData.rg.trim()) {
-      newErrors.rg = 'RG é obrigatório';
     }
 
     if (!formData.email) {
@@ -383,37 +499,19 @@ const UserForm: React.FC = () => {
           sx={fieldStyles}
         />
 
-        <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
-          <Box sx={{ flex: 1 }}>
-            <TextField
-              fullWidth
-              margin="normal"
-              label="CPF"
-              name="cpf"
-              value={formData.cpf}
-              onChange={handleChange}
-              error={!!errors.cpf}
-              helperText={errors.cpf}
-              placeholder="000.000.000-00"
-              InputLabelProps={labelProps}
-              sx={fieldStyles}
-            />
-          </Box>
-          <Box sx={{ flex: 1 }}>
-            <TextField
-              fullWidth
-              margin="normal"
-              label="RG"
-              name="rg"
-              value={formData.rg}
-              onChange={handleChange}
-              error={!!errors.rg}
-              helperText={errors.rg}
-              InputLabelProps={labelProps}
-              sx={fieldStyles}
-            />
-          </Box>
-        </Box>
+        <TextField
+          fullWidth
+          margin="normal"
+          label="CPF"
+          name="cpf"
+          value={formData.cpf}
+          onChange={handleChange}
+          error={!!errors.cpf}
+          helperText={errors.cpf}
+          placeholder="000.000.000-00"
+          InputLabelProps={labelProps}
+          sx={fieldStyles}
+        />
 
         <TextField
           fullWidth
@@ -474,23 +572,13 @@ const UserForm: React.FC = () => {
           name="cep"
           value={formData.cep}
           onChange={handleChange}
+          onBlur={handleCepBlur}
           error={!!errors.cep}
-          helperText={errors.cep}
+          helperText={searchingCep ? 'Buscando endereço...' : errors.cep}
           placeholder="00000-000"
-          InputLabelProps={{
-            sx: { backgroundColor: '#fff', fontSize: 17, fontWeight: 500, color: '#0056FF' },
-            shrink: undefined
-          }}
-          inputProps={{ style: { height: 48, padding: '16.5px 14px', fontSize: 17 } }}
-          sx={{
-            mt: 2,
-            mb: 1,
-            '& .MuiInputBase-root': {
-              height: 56,
-              borderRadius: 2,
-              fontSize: 17,
-            },
-          }}
+          disabled={searchingCep}
+          InputLabelProps={labelProps}
+          sx={fieldStyles}
         />
 
         <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
@@ -504,20 +592,8 @@ const UserForm: React.FC = () => {
               onChange={handleChange}
               error={!!errors.state}
               helperText={errors.state}
-              InputLabelProps={{
-                sx: { backgroundColor: '#fff', fontSize: 17, fontWeight: 500, color: '#0056FF' },
-                shrink: undefined
-              }}
-              inputProps={{ style: { height: 48, padding: '16.5px 14px', fontSize: 17 } }}
-              sx={{
-                mt: 2,
-                mb: 1,
-                '& .MuiInputBase-root': {
-                  height: 56,
-                  borderRadius: 2,
-                  fontSize: 17,
-                },
-              }}
+              InputLabelProps={labelProps}
+              sx={fieldStyles}
             />
           </Box>
           <Box sx={{ flex: 1 }}>
@@ -530,20 +606,8 @@ const UserForm: React.FC = () => {
               onChange={handleChange}
               error={!!errors.city}
               helperText={errors.city}
-              InputLabelProps={{
-                sx: { backgroundColor: '#fff', fontSize: 17, fontWeight: 500, color: '#0056FF' },
-                shrink: undefined
-              }}
-              inputProps={{ style: { height: 48, padding: '16.5px 14px', fontSize: 17 } }}
-              sx={{
-                mt: 2,
-                mb: 1,
-                '& .MuiInputBase-root': {
-                  height: 56,
-                  borderRadius: 2,
-                  fontSize: 17,
-                },
-              }}
+              InputLabelProps={labelProps}
+              sx={fieldStyles}
             />
           </Box>
         </Box>
@@ -557,49 +621,24 @@ const UserForm: React.FC = () => {
           onChange={handleChange}
           error={!!errors.neighborhood}
           helperText={errors.neighborhood}
-          InputLabelProps={{
-            sx: { backgroundColor: '#fff', fontSize: 17, fontWeight: 500, color: '#0056FF' },
-            shrink: undefined
-          }}
-          inputProps={{ style: { height: 48, padding: '16.5px 14px', fontSize: 17 } }}
-          sx={{
-            mt: 2,
-            mb: 1,
-            '& .MuiInputBase-root': {
-              height: 56,
-              borderRadius: 2,
-              fontSize: 17,
-            },
-          }}
+          InputLabelProps={labelProps}
+          sx={fieldStyles}
+        />
+
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Rua"
+          name="street"
+          value={formData.street}
+          onChange={handleChange}
+          error={!!errors.street}
+          helperText={errors.street}
+          InputLabelProps={labelProps}
+          sx={fieldStyles}
         />
 
         <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
-          <Box sx={{ flex: 2 }}>
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Rua"
-              name="street"
-              value={formData.street}
-              onChange={handleChange}
-              error={!!errors.street}
-              helperText={errors.street}
-              InputLabelProps={{
-                sx: { backgroundColor: '#fff', fontSize: 17, fontWeight: 500, color: '#0056FF' },
-                shrink: undefined
-              }}
-              inputProps={{ style: { height: 48, padding: '16.5px 14px', fontSize: 17 } }}
-              sx={{
-                mt: 2,
-                mb: 1,
-                '& .MuiInputBase-root': {
-                  height: 56,
-                  borderRadius: 2,
-                  fontSize: 17,
-                },
-              }}
-            />
-          </Box>
           <Box sx={{ flex: 1 }}>
             <TextField
               fullWidth
@@ -610,82 +649,84 @@ const UserForm: React.FC = () => {
               onChange={handleChange}
               error={!!errors.number}
               helperText={errors.number}
-              InputLabelProps={{
-                sx: { backgroundColor: '#fff', fontSize: 17, fontWeight: 500, color: '#0056FF' },
-                shrink: undefined
-              }}
-              inputProps={{ style: { height: 48, padding: '16.5px 14px', fontSize: 17 } }}
-              sx={{
-                mt: 2,
-                mb: 1,
-                '& .MuiInputBase-root': {
-                  height: 56,
-                  borderRadius: 2,
-                  fontSize: 17,
-                },
-              }}
+              InputLabelProps={labelProps}
+              sx={fieldStyles}
+            />
+          </Box>
+          <Box sx={{ flex: 2 }}>
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Complemento (opcional)"
+              name="complement"
+              value={formData.complement}
+              onChange={handleChange}
+              InputLabelProps={labelProps}
+              sx={fieldStyles}
             />
           </Box>
         </Box>
-
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Complemento (opcional)"
-          name="complement"
-          value={formData.complement}
-          onChange={handleChange}
-          InputLabelProps={labelProps}
-          sx={fieldStyles}
-        />
 
         {/* Dados Bancários */}
         <Typography variant="h6" sx={{ color: '#0033ff', mb: 2, mt: 3, fontSize: '1.1rem', fontWeight: 600 }}>
           Dados Bancários
         </Typography>
 
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Nome do Banco"
-          name="bankName"
-          value={formData.bankName}
-          onChange={handleChange}
+        <FormControl 
+          fullWidth 
+          margin="normal" 
           error={!!errors.bankName}
-          helperText={errors.bankName}
-          placeholder="Ex: Banco do Brasil, Itaú, etc."
-          InputLabelProps={labelProps}
-          sx={fieldStyles}
-        />
+          sx={selectFieldStyles}
+        >
+          <InputLabel sx={labelProps.sx}>
+            Nome do Banco
+          </InputLabel>
+          <Select
+            name="bankName"
+            value={formData.bankName}
+            onChange={handleSelectChange}
+            label="Nome do Banco"
+          >
+            {BRAZILIAN_BANKS.map((bank) => (
+              <MenuItem key={bank} value={bank}>
+                {bank}
+              </MenuItem>
+            ))}
+          </Select>
+          {errors.bankName && (
+            <Typography variant="caption" color="error" sx={{ ml: 2, mt: 0.5 }}>
+              {errors.bankName}
+            </Typography>
+          )}
+        </FormControl>
+
+        <FormControl 
+          fullWidth 
+          margin="normal" 
+          error={!!errors.accountType}
+          sx={selectFieldStyles}
+        >
+          <InputLabel sx={labelProps.sx}>
+            Tipo de Conta
+          </InputLabel>
+          <Select
+            name="accountType"
+            value={formData.accountType}
+            onChange={handleSelectChange}
+            label="Tipo de Conta"
+          >
+            <MenuItem value="corrente">Conta Corrente</MenuItem>
+            <MenuItem value="poupanca">Conta Poupança</MenuItem>
+            <MenuItem value="salario">Conta Salário</MenuItem>
+          </Select>
+          {errors.accountType && (
+            <Typography variant="caption" color="error" sx={{ ml: 2, mt: 0.5 }}>
+              {errors.accountType}
+            </Typography>
+          )}
+        </FormControl>
 
         <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
-          <Box sx={{ flex: 1 }}>
-            <FormControl 
-              fullWidth 
-              margin="normal" 
-              error={!!errors.accountType}
-              sx={fieldStyles}
-            >
-              <InputLabel sx={labelProps.sx}>
-                Tipo de Conta
-              </InputLabel>
-              <Select
-                name="accountType"
-                value={formData.accountType}
-                onChange={handleSelectChange}
-                label="Tipo de Conta"
-              >
-                <MenuItem value="corrente">Conta Corrente</MenuItem>
-                <MenuItem value="poupanca">Conta Poupança</MenuItem>
-                <MenuItem value="salario">Conta Salário</MenuItem>
-              </Select>
-              {errors.accountType && (
-                <Typography variant="caption" color="error" sx={{ ml: 2, mt: 0.5 }}>
-                  {errors.accountType}
-                </Typography>
-              )}
-            </FormControl>
-          </Box>
           <Box sx={{ flex: 1 }}>
             <TextField
               fullWidth
@@ -701,9 +742,6 @@ const UserForm: React.FC = () => {
               sx={fieldStyles}
             />
           </Box>
-        </Box>
-
-        <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
           <Box sx={{ flex: 1 }}>
             <TextField
               fullWidth
@@ -719,22 +757,21 @@ const UserForm: React.FC = () => {
               sx={fieldStyles}
             />
           </Box>
-          <Box sx={{ flex: 1 }}>
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Chave PIX (Opcional)"
-              name="pixKey"
-              value={formData.pixKey}
-              onChange={handleChange}
-              error={!!errors.pixKey}
-              helperText={errors.pixKey || 'CPF, email, telefone ou chave aleatória'}
-              placeholder="Sua chave PIX"
-              InputLabelProps={labelProps}
-              sx={fieldStyles}
-            />
-          </Box>
         </Box>
+
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Chave PIX (Opcional)"
+          name="pixKey"
+          value={formData.pixKey}
+          onChange={handleChange}
+          error={!!errors.pixKey}
+          helperText={errors.pixKey || 'CPF, email, telefone ou chave aleatória'}
+          placeholder="Sua chave PIX"
+          InputLabelProps={labelProps}
+          sx={fieldStyles}
+        />
 
         <Button
           fullWidth

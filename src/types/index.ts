@@ -2,7 +2,6 @@ export interface FormData {
   fullName: string;
   cpf: string;
   cnpj?: string;
-  rg: string;
   email: string;
   phone: string;
   cep: string;
@@ -24,7 +23,6 @@ export interface FormErrors {
   fullName?: string;
   cpf?: string;
   cnpj?: string;
-  rg?: string;
   email?: string;
   phone?: string;
   cep?: string;
