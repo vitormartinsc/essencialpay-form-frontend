@@ -94,9 +94,9 @@ const UserForm: React.FC = () => {
     mt: 1,
     mb: 1,
     width: '100%',
-    maxWidth: '500px', // Aumentado de 400px para 500px
+    maxWidth: '500px',
     '& .MuiInputBase-root': {
-      height: '56px', // Altura fixa padronizada para todos os campos
+      height: '56px', // Voltando ao padrão
       fontSize: '1rem',
       backgroundColor: '#fff',
       color: '#0033ff',
@@ -109,7 +109,7 @@ const UserForm: React.FC = () => {
     },
     '& .MuiInputBase-input': {
       padding: '16px 14px',
-      height: 'auto', // Deixa o Material-UI gerenciar a altura interna
+      height: 'auto',
       '&::placeholder': {
         color: '#999',
         opacity: 1,
@@ -123,36 +123,68 @@ const UserForm: React.FC = () => {
       height: 'auto',
       display: 'flex',
       alignItems: 'center',
-      minHeight: '24px', // Altura mínima para o conteúdo do select
+      minHeight: '24px',
     },
   };
 
-  // Styling específico para campos Select
+  // Styling específico para campos Select - idêntico aos TextField
   const selectFieldStyles = {
     ...fieldStyles,
     '& .MuiInputBase-root': {
-      ...fieldStyles['& .MuiInputBase-root'],
-      minHeight: '56px', // Garante altura mínima
+      height: '56px',
+      fontSize: '1rem',
+      backgroundColor: '#fff',
+      color: '#0033ff',
+      border: '1px solid #ccc',
+      borderRadius: '8px',
+      '&:focus-within': {
+        border: '1px solid #0033ff',
+        boxShadow: '0 0 6px rgba(0, 51, 255, 0.5)',
+      },
+      '&:hover': {
+        borderColor: '#0033ff',
+      },
     },
     '& .MuiSelect-select': {
-      padding: '16px 14px',
+      padding: '16px 14px !important',
       height: 'auto',
       display: 'flex',
       alignItems: 'center',
       minHeight: '24px',
-      lineHeight: '1.4375em', // Altura padrão do Material-UI
+      lineHeight: '1.4375em',
+      backgroundColor: 'transparent !important',
+      border: 'none !important',
+      '&:focus': {
+        backgroundColor: 'transparent !important',
+      },
+    },
+    '& .MuiSelect-icon': {
+      color: '#0033ff',
+      right: '8px',
+    },
+    '& .MuiOutlinedInput-notchedOutline': {
+      display: 'none !important', // Remove completamente a borda padrão
     },
     '& .MuiInputLabel-root': {
       transform: 'translate(14px, 16px) scale(1)',
       '&.MuiInputLabel-shrink': {
         transform: 'translate(14px, -9px) scale(0.75)',
+        backgroundColor: '#fff',
+        paddingX: '4px',
+      },
+    },
+    '& .MuiFormControl-root': {
+      '& .MuiInputBase-root': {
+        '&::before, &::after': {
+          display: 'none !important',
+        },
       },
     },
   };
 
   const labelProps = {
     sx: { 
-      fontSize: '1rem', 
+      fontSize: '0.95rem', // Reduzido ligeiramente para mobile
       fontWeight: 500, 
       color: '#0033ff',
       '&.Mui-focused': {
@@ -621,7 +653,7 @@ const UserForm: React.FC = () => {
         borderRadius: '8px',
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         width: '100%',
-        maxWidth: '450px', // Ajustado para 450px
+        maxWidth: '450px',
         margin: '0 auto',
         boxSizing: 'border-box',
       }}
@@ -734,23 +766,19 @@ const UserForm: React.FC = () => {
           sx={fieldStyles}
         />
 
-        <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
-          <Box sx={{ flex: 1 }}>
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Telefone/Celular"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              error={!!errors.phone}
-              helperText={errors.phone}
-              placeholder="(11) 99999-9999"
-              InputLabelProps={labelProps}
-              sx={fieldStyles}
-            />
-          </Box>
-        </Box>
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Telefone/Celular"
+          name="phone"
+          value={formData.phone}
+          onChange={handleChange}
+          error={!!errors.phone}
+          helperText={errors.phone}
+          placeholder="(11) 99999-9999"
+          InputLabelProps={labelProps}
+          sx={fieldStyles}
+        />
 
         {/* CNPJ Campo Opcional */}
         <TextField
@@ -788,11 +816,16 @@ const UserForm: React.FC = () => {
           sx={fieldStyles}
         />
 
-        <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+        <Box sx={{ 
+          display: 'flex', 
+          gap: 2, 
+          flexDirection: { xs: 'column', sm: 'row' }, 
+          mt: 1, 
+          mb: 1
+        }}>
           <Box sx={{ flex: 1 }}>
             <TextField
               fullWidth
-              margin="normal"
               label="Estado (UF)"
               name="state"
               value={formData.state}
@@ -801,13 +834,16 @@ const UserForm: React.FC = () => {
               helperText={errors.state}
               placeholder="Ex: SP, RJ, MG"
               InputLabelProps={labelProps}
-              sx={fieldStyles}
+              sx={{
+                ...fieldStyles,
+                mt: 0,
+                mb: 0
+              }}
             />
           </Box>
           <Box sx={{ flex: 1 }}>
             <TextField
               fullWidth
-              margin="normal"
               label="Cidade"
               name="city"
               value={formData.city}
@@ -815,7 +851,11 @@ const UserForm: React.FC = () => {
               error={!!errors.city}
               helperText={errors.city}
               InputLabelProps={labelProps}
-              sx={fieldStyles}
+              sx={{
+                ...fieldStyles,
+                mt: 0,
+                mb: 0
+              }}
             />
           </Box>
         </Box>
@@ -846,11 +886,16 @@ const UserForm: React.FC = () => {
           sx={fieldStyles}
         />
 
-        <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+        <Box sx={{ 
+          display: 'flex', 
+          gap: 2, 
+          flexDirection: { xs: 'column', sm: 'row' }, 
+          mt: 1, 
+          mb: 1
+        }}>
           <Box sx={{ flex: 1 }}>
             <TextField
               fullWidth
-              margin="normal"
               label="Número"
               name="number"
               value={formData.number}
@@ -858,19 +903,26 @@ const UserForm: React.FC = () => {
               error={!!errors.number}
               helperText={errors.number}
               InputLabelProps={labelProps}
-              sx={fieldStyles}
+              sx={{
+                ...fieldStyles,
+                mt: 0,
+                mb: 0
+              }}
             />
           </Box>
           <Box sx={{ flex: 2 }}>
             <TextField
               fullWidth
-              margin="normal"
               label="Complemento (opcional)"
               name="complement"
               value={formData.complement}
               onChange={handleChange}
               InputLabelProps={labelProps}
-              sx={fieldStyles}
+              sx={{
+                ...fieldStyles,
+                mt: 0,
+                mb: 0
+              }}
             />
           </Box>
         </Box>
@@ -934,11 +986,16 @@ const UserForm: React.FC = () => {
           )}
         </FormControl>
 
-        <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+        <Box sx={{ 
+          display: 'flex', 
+          gap: 2, 
+          flexDirection: { xs: 'column', sm: 'row' }, 
+          mt: 1, 
+          mb: 1
+        }}>
           <Box sx={{ flex: 1 }}>
             <TextField
               fullWidth
-              margin="normal"
               label="Agência"
               name="agency"
               value={formData.agency}
@@ -947,13 +1004,16 @@ const UserForm: React.FC = () => {
               helperText={errors.agency}
               placeholder="0000"
               InputLabelProps={labelProps}
-              sx={fieldStyles}
+              sx={{
+                ...fieldStyles,
+                mt: 0,
+                mb: 0
+              }}
             />
           </Box>
           <Box sx={{ flex: 1 }}>
             <TextField
               fullWidth
-              margin="normal"
               label="Conta"
               name="account"
               value={formData.account}
@@ -962,7 +1022,11 @@ const UserForm: React.FC = () => {
               helperText={errors.account}
               placeholder="000000-0"
               InputLabelProps={labelProps}
-              sx={fieldStyles}
+              sx={{
+                ...fieldStyles,
+                mt: 0,
+                mb: 0
+              }}
             />
           </Box>
         </Box>
