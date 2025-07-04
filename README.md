@@ -1,23 +1,75 @@
-# EssentialPay Form
+# Essencial Pay - Formulário de Cadastro
 
-Um projeto de formulário React moderno e responsivo construído com TypeScript, Vite e Material-UI.
+> Plataforma de cadastro para vinculação de maquininhas de cartão e serviços de pagamento
 
-## 🚀 Características
+## 🚀 Tecnologias
 
-- **Framework**: React 18 com TypeScript
-- **Build Tool**: Vite para desenvolvimento rápido
-- **UI Components**: Material-UI (MUI) v5
-- **Styling**: CSS customizado com design responsivo
-- **Validação**: Validação de formulário completa
-- **Formatação**: Máscaras automáticas para CPF, telefone e CEP
+- **React 18** com TypeScript
+- **Vite** - Build tool moderna
+- **Material-UI (MUI) v5** - Componentes de UI
+- **React Router** - Roteamento SPA
+- **LGPD Compliant** - Termos de uso e política de privacidade
 
-## 📋 Campos do Formulário
+## 📦 Instalação e Execução
 
-### Informações Pessoais
-- Nome completo
-- CPF (com validação e formatação)
-- RG
-- Email (com validação)
+```bash
+# Instalar dependências
+npm install
+
+# Executar em desenvolvimento
+npm run dev
+
+# Build para produção
+npm run build
+
+# Preview do build
+npm run preview
+```
+
+## 🌐 Deploy
+
+O projeto está configurado para deploy automático no **Vercel**.
+
+## 📄 Páginas
+
+- `/` - Redireciona para `/cadastro`
+- `/cadastro` - Formulário principal
+- `/termos-de-uso` - Termos de uso detalhados
+- `/politica-de-privacidade` - Política de privacidade (LGPD)
+
+## 💼 Funcionalidades
+
+### Formulário de Cadastro
+- **Dados Pessoais**: Nome, CPF, email, telefone
+- **Endereço**: CEP com busca automática
+- **Dados Bancários**: Banco, agência, conta
+- **Documentos**: Upload de RG/CNH e comprovante de residência
+- **Validação**: Campos obrigatórios e formatos corretos
+- **Consentimento**: Checkbox obrigatória para LGPD
+
+### Recursos Técnicos
+- ✅ Responsivo (mobile-first)
+- ✅ Formatação automática (CPF, telefone, CEP)
+- ✅ Validação em tempo real
+- ✅ Upload de arquivos
+- ✅ Busca automática de endereço por CEP
+- ✅ Conformidade com LGPD
+
+## � Componentes Principais
+
+- `UserForm` - Formulário principal
+- `Header` - Cabeçalho com logo
+- `Footer` - Rodapé com links legais
+- `WhatsAppFloatButton` - Botão flutuante de contato
+- `TermsOfUse` - Página de termos
+- `PrivacyPolicy` - Página de política de privacidade
+
+## 🎨 Design System
+
+- **Cores primárias**: #0033ff, #0056FF
+- **Tipografia**: Poppins
+- **Componentes**: Material-UI customizados
+- **Responsividade**: Mobile-first approach
 - Telefone/Celular (com formatação)
 - Data de nascimento
 - Gênero
