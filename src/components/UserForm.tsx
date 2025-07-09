@@ -42,6 +42,7 @@ import './EssencialForm.css';
 import idFrente from '../assets/id_frente.svg';
 import idVerso from '../assets/id_verso.svg';
 import cnhImage from '../assets/cnh.svg';
+import selfieIcon from '../assets/selfie.png';
 import comprovanteResidencia from '../assets/comprovante_residencia.png';
 
 // Lista dos principais bancos brasileiros
@@ -217,6 +218,7 @@ const UserForm: React.FC = () => {
     documentType: 'RG',
     documentFront: null,
     documentBack: null,
+    selfie: null,
     residenceProof: null,
   });
 
@@ -248,6 +250,7 @@ const UserForm: React.FC = () => {
     if (errors.account) messages.push('• Conta bancária inválida ou não preenchida');
     if (errors.documentFront) messages.push('• Documento obrigatório não enviado');
     if (errors.documentBack) messages.push('• Verso do documento obrigatório não enviado');
+    if (errors.selfie) messages.push('• Selfie obrigatória não enviada');
     if (errors.residenceProof) messages.push('• Comprovante de residência obrigatório');
     
     return messages;
@@ -267,6 +270,7 @@ const UserForm: React.FC = () => {
       documentType: newDocumentType,
       documentFront: null,
       documentBack: null,
+      selfie: null,
     }));
   };
 
@@ -345,7 +349,7 @@ const UserForm: React.FC = () => {
       const file = files[0];
       
       // Para documentos, só aceita imagens
-      if (name === 'documentFront' || name === 'documentBack') {
+      if (name === 'documentFront' || name === 'documentBack' || name === 'selfie') {
         if (!isValidImage(file)) {
           alert('Por favor, selecione uma imagem válida (PNG, JPG, JPEG, WEBP).');
           return;
@@ -531,6 +535,11 @@ const UserForm: React.FC = () => {
       newErrors.residenceProof = 'Comprovante de residência é obrigatório';
     }
 
+    // Validação da selfie (obrigatória para ambos os tipos de documento)
+    if (!formData.selfie) {
+      newErrors.selfie = 'Selfie é obrigatória';
+    }
+
     return newErrors;
   };
 
@@ -586,6 +595,9 @@ const UserForm: React.FC = () => {
       }
       if (formData.residenceProof) {
         formDataToSend.append('residenceProof', formData.residenceProof);
+      }
+      if (formData.selfie) {
+        formDataToSend.append('selfie', formData.selfie);
       }
       
       // Enviar dados para o backend
@@ -1033,7 +1045,7 @@ const UserForm: React.FC = () => {
 
         {/* Documentos */}
         <Typography variant="h6" sx={{ color: '#0033ff', mb: 2, mt: 3, fontSize: '1.1rem', fontWeight: 600, textAlign: 'center' }}>
-          Documento e Comprovante de Residência
+          Documentos de Identificação
         </Typography>
 
         <RadioGroup
@@ -1226,8 +1238,186 @@ const UserForm: React.FC = () => {
           </Box>
         )}
 
+        {/* Selfie do Cliente */}
+        <Typography variant="body2" sx={{ 
+          mt: 4, 
+          mb: 2, 
+          color: '#0056FF', 
+          fontWeight: 'bold', 
+          fontSize: '1rem', 
+          textAlign: 'center',
+          borderTop: '1px solid #e0e0e0',
+          paddingTop: 3
+        }}>
+          Agora precisamos de uma selfie sua
+        </Typography>
+
+        <Alert 
+          severity="info" 
+          sx={{ 
+            mb: 3, 
+            background: '#e3f2fd', 
+            color: '#0056FF', 
+            border: '1px solid #0056FF',
+            fontWeight: 500, 
+            textAlign: 'left',
+            borderRadius: '8px',
+            '& .MuiAlert-icon': {
+              color: '#0056FF'
+            }
+          }}
+        >
+          <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>
+            📸 Instruções para a selfie:
+          </Typography>
+          <Typography variant="body2" component="div">
+            • Tire a foto de frente, olhando para a câmera<br/>
+            • Certifique-se de que seu rosto esteja bem iluminado<br/>
+            • Mantenha a foto nítida e sem objetos na frente<br/>
+            • Não use óculos escuros, bonés ou máscaras<br/>
+            • O rosto deve ocupar boa parte da foto
+          </Typography>
+        </Alert>
+
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+          <Box sx={{ 
+            textAlign: 'center', 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center', 
+            backgroundColor: '#e8f5e8', 
+            padding: '20px 15px 15px 15px', 
+            borderRadius: '12px', 
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', 
+            width: { xs: 180, sm: 200 }, 
+            border: '2px solid #4caf50'
+          }}>
+            <Typography variant="body2" sx={{ 
+              mb: 1.5, 
+              color: '#2e7d32', 
+              fontWeight: 'bold', 
+              fontSize: '0.9rem', 
+              textAlign: 'center', 
+              lineHeight: 1.3 
+            }}>
+              Sua Selfie
+            </Typography>
+            <Box sx={{ 
+              width: '70px', 
+              height: '70px', 
+              backgroundColor: '#f1f8e9', 
+              borderRadius: '50%', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              mb: 1.5, 
+              mt: 0.5,
+              border: '2px solid #81c784'
+            }}>
+              <img src={selfieIcon} alt="Selfie" style={{ width: '45px', height: '45px', objectFit: 'contain' }} />
+            </Box>
+            {!formData.selfie ? (
+              <Button 
+                variant="contained" 
+                component="label" 
+                sx={{ 
+                  backgroundColor: '#4caf50', 
+                  color: '#fff', 
+                  fontWeight: 'bold', 
+                  textTransform: 'none', 
+                  borderRadius: '8px', 
+                  minWidth: 90, 
+                  height: 34, 
+                  px: 2, 
+                  py: 0, 
+                  fontSize: 14, 
+                  whiteSpace: 'nowrap', 
+                  display: 'flex', 
+                  alignSelf: 'center', 
+                  justifyContent: 'center', 
+                  mb: 1,
+                  '&:hover': { 
+                    backgroundColor: '#388e3c' 
+                  } 
+                }}
+              >
+                Enviar Selfie
+                <input 
+                  type="file" 
+                  accept="image/png, image/jpeg, image/jpg, image/webp" 
+                  name="selfie" 
+                  onChange={handleFileChange}
+                  capture="user"
+                  style={{ 
+                    display: 'none',
+                    opacity: 0,
+                    position: 'absolute',
+                    zIndex: -1,
+                    width: 0,
+                    height: 0,
+                    overflow: 'hidden'
+                  }}
+                />
+              </Button>
+            ) : (
+              <Box sx={{ 
+                mt: 1, 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 1, 
+                background: '#f1f8e9', 
+                borderRadius: '6px', 
+                px: 1, 
+                py: 0.5, 
+                width: '100%' 
+              }}>
+                <Typography
+                  sx={{
+                    fontFamily: 'Inter, Roboto, Arial, sans-serif',
+                    color: '#2e7d32',
+                    fontWeight: 500,
+                    fontSize: 14,
+                    letterSpacing: 0.2,
+                    cursor: 'pointer',
+                    marginRight: 1,
+                    userSelect: 'text',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    flex: 1,
+                  }}
+                >
+                  {formData.selfie.name}
+                </Typography>
+                <CloseIcon
+                  sx={{ cursor: 'pointer', color: '#b71c1c', fontSize: 18, ml: 0.5 }}
+                  onClick={() => setFormData(prev => ({ ...prev, selfie: null }))}
+                />
+              </Box>
+            )}
+            {!formData.selfie && errors.selfie && (
+              <Typography variant="caption" color="error" sx={{ mt: 1, mb: 1, display: 'block' }}>
+                {errors.selfie}
+              </Typography>
+            )}
+          </Box>
+        </Box>
+
         {/* Comprovante de Residência */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+        <Typography variant="body2" sx={{ 
+          mt: 4, 
+          mb: 2, 
+          color: '#0056FF', 
+          fontWeight: 'bold', 
+          fontSize: '1rem', 
+          textAlign: 'center',
+          borderTop: '1px solid #e0e0e0',
+          paddingTop: 3
+        }}>
+          Por último, o comprovante de residência
+        </Typography>
+
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
           <Box sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#e3f2fd', padding: '20px 15px 15px 15px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', minWidth: 0, width: { xs: 180, sm: 200 }, minHeight: 0, height: 'auto' }}>
             <Typography variant="body2" sx={{ mb: 1.5, color: '#0056FF', fontWeight: 'bold', fontSize: '0.9rem', textAlign: 'center', lineHeight: 1.3 }}>Comprovante de Residência</Typography>
             <Box sx={{ width: '70px', height: '70px', backgroundColor: '#f9f9f9', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5, mt: 0.5 }}>
@@ -1285,7 +1475,7 @@ const UserForm: React.FC = () => {
         </Box>
 
         <Typography variant="caption" sx={{ color: '#666', mt: 2, display: 'block', textAlign: 'center' }}>
-          Formatos aceitos: PNG, JPG, JPEG, WEBP (documentos) | PDF, PNG, JPG, JPEG, WEBP (comprovante)
+          Formatos aceitos: PNG, JPG, JPEG, WEBP (documentos e selfie) | PDF, PNG, JPG, JPEG, WEBP (comprovante)
         </Typography>
 
         {showValidationAlert && (

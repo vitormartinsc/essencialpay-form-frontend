@@ -20,6 +20,7 @@ export interface FormData {
   documentType: string;
   documentFront: File | null;
   documentBack: File | null;
+  selfie: File | null;
   residenceProof: File | null;
 }
 
@@ -45,6 +46,7 @@ export interface FormErrors {
   documentType?: string;
   documentFront?: string;
   documentBack?: string;
+  selfie?: string;
   residenceProof?: string;
   // Consentimento
   consent?: string;
