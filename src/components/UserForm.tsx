@@ -1252,32 +1252,80 @@ const UserForm: React.FC = () => {
           Agora precisamos de uma selfie sua
         </Typography>
 
-        <Alert 
-          severity="info" 
-          sx={{ 
-            mb: 3, 
-            background: '#e3f2fd', 
-            color: '#0056FF', 
-            border: '1px solid #0056FF',
-            fontWeight: 500, 
-            textAlign: 'left',
-            borderRadius: '8px',
-            '& .MuiAlert-icon': {
-              color: '#0056FF'
+        {/* Ticker motivacional */}
+        <Box sx={{ 
+          mb: 3, 
+          backgroundColor: '#f0f8ff', 
+          border: '1px solid #4caf50', 
+          borderRadius: '8px', 
+          padding: '12px 16px', 
+          maxWidth: '340px', 
+          margin: '0 auto 16px auto',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          <Box sx={{
+            position: 'absolute',
+            top: 0,
+            left: '-100%',
+            width: '100%',
+            height: '2px',
+            background: 'linear-gradient(90deg, transparent, #4caf50, transparent)',
+            animation: 'ticker-slide 3s infinite linear',
+            '@keyframes ticker-slide': {
+              '0%': { left: '-100%' },
+              '100%': { left: '100%' }
             }
-          }}
-        >
-          <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>
-            📸 Instruções para a selfie:
+          }} />
+          <Typography variant="body2" sx={{ 
+            color: '#2e7d32', 
+            textAlign: 'center',
+            fontSize: '0.85rem',
+            fontWeight: 600,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 1
+          }}>
+            <Box component="span" sx={{
+              width: '8px',
+              height: '8px',
+              backgroundColor: '#4caf50',
+              borderRadius: '50%',
+              animation: 'pulse 2s infinite',
+              '@keyframes pulse': {
+                '0%, 100%': { opacity: 1, transform: 'scale(1)' },
+                '50%': { opacity: 0.7, transform: 'scale(1.2)' }
+              }
+            }} />
+            Quase terminando! Estes são os últimos passos
+            <Box component="span" sx={{
+              width: '8px',
+              height: '8px',
+              backgroundColor: '#4caf50',
+              borderRadius: '50%',
+              animation: 'pulse 2s infinite 0.5s',
+              '@keyframes pulse': {
+                '0%, 100%': { opacity: 1, transform: 'scale(1)' },
+                '50%': { opacity: 0.7, transform: 'scale(1.2)' }
+              }
+            }} />
           </Typography>
-          <Typography variant="body2" component="div">
-            • Tire a foto de frente, olhando para a câmera<br/>
-            • Certifique-se de que seu rosto esteja bem iluminado<br/>
-            • Mantenha a foto nítida e sem objetos na frente<br/>
-            • Não use óculos escuros, bonés ou máscaras<br/>
-            • O rosto deve ocupar boa parte da foto
-          </Typography>
-        </Alert>
+        </Box>
+
+        <Typography variant="body2" sx={{ 
+          mb: 3, 
+          color: '#666', 
+          textAlign: 'center',
+          fontSize: '0.8rem',
+          lineHeight: 1.4,
+          maxWidth: '320px',
+          margin: '0 auto 24px auto'
+        }}>
+          <strong>Tire de frente, olhando para a câmera</strong><br/>
+          Boa iluminação, sem sombras no rosto<br/>
+          Sem óculos escuros, bonés ou máscaras
+        </Typography>
 
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
           <Box sx={{ 
@@ -1341,7 +1389,7 @@ const UserForm: React.FC = () => {
                   } 
                 }}
               >
-                Enviar Selfie
+                Tirar Selfie
                 <input 
                   type="file" 
                   accept="image/png, image/jpeg, image/jpg, image/webp" 
