@@ -1,10 +1,11 @@
 export interface FormData {
+  // Informações de contato - OBRIGATÓRIAS
+  fullName: string; // Obrigatório
+  phone: string; // Obrigatório
   // TODO: Reativar quando necessário - informações pessoais básicas
-  fullName: string;
   cpf: string;
   cnpj?: string;
   email: string;
-  phone: string;
   // TODO: Reativar quando necessário - informações de endereço
   cep: string;
   state: string;
@@ -27,12 +28,13 @@ export interface FormData {
 }
 
 export interface FormErrors {
-  // TODO: Reativar quando necessário - informações pessoais básicas
+  // Informações de contato - OBRIGATÓRIAS
   fullName?: string;
+  phone?: string;
+  // TODO: Reativar quando necessário - informações pessoais básicas
   cpf?: string;
   cnpj?: string;
   email?: string;
-  phone?: string;
   // TODO: Reativar quando necessário - informações de endereço
   cep?: string;
   state?: string;

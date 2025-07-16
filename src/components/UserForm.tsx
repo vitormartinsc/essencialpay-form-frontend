@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Container,
   Button,
   Typography,
   Box,
@@ -20,7 +19,7 @@ import {
   // validateCpf,
   // validateCnpj,
   // validateEmail,
-  // validatePhone,
+  validatePhone, // Reativado para validar celular
   // validateCep,
   validateAccount,
 } from '../utils/formatters';
@@ -34,18 +33,20 @@ import './EssencialForm.css';
 // import PersonalInfoStep from './FormSteps/PersonalInfoStep';
 // TODO: Reativar quando necessário - informações de endereço
 // import AddressStep from './FormSteps/AddressStep';
+import ContactStep from './FormSteps/ContactStep';
 import BankingStep from './FormSteps/BankingStep';
 import DocumentsStep from './FormSteps/DocumentsStep';
 import ConsentStep from './FormSteps/ConsentStep';
 
 const UserForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
-    // TODO: Reativar quando necessário - informações pessoais básicas
+    // Informações de contato - OBRIGATÓRIAS
     fullName: '',
+    phone: '',
+    // TODO: Reativar quando necessário - informações pessoais básicas
     cpf: '',
     cnpj: '',
     email: '',
-    phone: '',
     // TODO: Reativar quando necessário - informações de endereço
     cep: '',
     state: '',
@@ -259,12 +260,20 @@ const UserForm: React.FC = () => {
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
 
-    // TODO: Reativar quando necessário - validações de informações pessoais
-    /*
+    // Validação do celular - OBRIGATÓRIO
+    if (!formData.phone) {
+      newErrors.phone = 'Celular é obrigatório';
+    } else if (!validatePhone(formData.phone)) {
+      newErrors.phone = 'Celular inválido';
+    }
+
+    // Validação do nome completo - OBRIGATÓRIO
     if (!formData.fullName.trim()) {
       newErrors.fullName = 'Nome completo é obrigatório';
     }
 
+    // TODO: Reativar quando necessário - validações de informações pessoais
+    /*
     if (!formData.cpf) {
       newErrors.cpf = 'CPF é obrigatório';
     } else if (!validateCpf(formData.cpf)) {
@@ -280,12 +289,6 @@ const UserForm: React.FC = () => {
       newErrors.email = 'Email é obrigatório';
     } else if (!validateEmail(formData.email)) {
       newErrors.email = 'Email inválido';
-    }
-
-    if (!formData.phone) {
-      newErrors.phone = 'Telefone é obrigatório';
-    } else if (!validatePhone(formData.phone)) {
-      newErrors.phone = 'Telefone inválido';
     }
     */
 
@@ -388,12 +391,14 @@ const UserForm: React.FC = () => {
       const formDataToSend = new FormData();
       
       // Adicionar todos os campos de texto
+      // Celular - OBRIGATÓRIO
+      formDataToSend.append('phone', formData.phone);
+      
       // TODO: Reativar quando necessário - informações pessoais básicas
       // formDataToSend.append('fullName', formData.fullName);
       // formDataToSend.append('cpf', formData.cpf);
       // formDataToSend.append('cnpj', formData.cnpj || '');
       // formDataToSend.append('email', formData.email);
-      // formDataToSend.append('phone', formData.phone);
       
       // TODO: Reativar quando necessário - informações de endereço
       // formDataToSend.append('cep', formData.cep);
@@ -520,8 +525,8 @@ const UserForm: React.FC = () => {
               mb: 3,
               lineHeight: 1.6,
             }}>
-              Seus dados bancários e documentos foram enviados com sucesso. 
-              Nossa equipe irá analisá-los e entrar em contato em breve.
+              Seu cadastro para maquininha foi enviado com sucesso! 
+              Nossa equipe irá analisar seus dados e sua maquininha será enviada em breve.
             </Typography>
           </Box>
 
@@ -554,7 +559,7 @@ const UserForm: React.FC = () => {
               }}>
                 ✓
               </Box>
-              Obrigado pela confiança!
+              Sua maquininha está a caminho!
             </Typography>
           </Box>
         </Box>
@@ -618,7 +623,7 @@ const UserForm: React.FC = () => {
             },
           }}
         >
-          Cadastro Bancário
+          Sua Maquininha Está Quase Pronta!
         </Typography>
         <Typography 
           variant="body1" 
@@ -629,7 +634,7 @@ const UserForm: React.FC = () => {
             mb: 2,
           }}
         >
-          Preencha os dados bancários e anexe os documentos necessários
+          Complete seu cadastro e receba sua maquininha de cartão em casa
         </Typography>
         <Box sx={{
           width: '60px',
@@ -697,14 +702,42 @@ const UserForm: React.FC = () => {
         }}
       >
         <Typography variant="body1" sx={{ fontWeight: 600 }}>
-          🏦 Dados Bancários e Documentos
+          💳 Cadastro para Maquininha
         </Typography>
         <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.9 }}>
-          Certifique-se de que todos os dados estão corretos antes de enviar
+          Preencha seus dados para receber sua maquininha de cartão em casa
         </Typography>
       </Alert>
 
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+        {/* Informações de Contato - ATIVO */}
+        <Box sx={{ 
+          mb: 4,
+          p: 3,
+          backgroundColor: '#FAFBFF',
+          borderRadius: '16px',
+          border: '1px solid rgba(0, 86, 255, 0.08)',
+          position: 'relative',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: '20px',
+            width: '40px',
+            height: '3px',
+            background: 'linear-gradient(90deg, #0033ff 0%, #0056FF 100%)',
+            borderRadius: '0 0 2px 2px',
+          }
+        }}>
+          <ContactStep
+            formData={formData}
+            errors={errors}
+            onFieldChange={handleChange}
+            fieldStyles={fieldStyles}
+            labelProps={labelProps}
+          />
+        </Box>
+
         {/* Dados Bancários - ATIVO */}
         <Box sx={{ 
           mb: 4,
@@ -890,8 +923,8 @@ const UserForm: React.FC = () => {
             </Box>
           ) : (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography sx={{ fontWeight: 600 }}>Enviar Cadastro</Typography>
-              <Typography sx={{ fontSize: '18px' }}>→</Typography>
+              <Typography sx={{ fontWeight: 600 }}>Solicitar Maquininha</Typography>
+              <Typography sx={{ fontSize: '18px' }}>💳</Typography>
             </Box>
           )}
         </Button>
@@ -932,7 +965,7 @@ const UserForm: React.FC = () => {
             }}>
               ✓
             </Box>
-            <span>Seus dados serão tratados com segurança e confidencialidade</span>
+            <span>Receba sua maquininha em casa com segurança e rapidez</span>
           </Typography>
         </Box>
       </Box>
