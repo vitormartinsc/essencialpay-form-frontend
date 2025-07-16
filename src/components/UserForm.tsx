@@ -394,8 +394,10 @@ const UserForm: React.FC = () => {
       // Celular - OBRIGATÓRIO
       formDataToSend.append('phone', formData.phone);
       
+      // Nome completo - OBRIGATÓRIO
+      formDataToSend.append('fullName', formData.fullName);
+      
       // TODO: Reativar quando necessário - informações pessoais básicas
-      // formDataToSend.append('fullName', formData.fullName);
       // formDataToSend.append('cpf', formData.cpf);
       // formDataToSend.append('cnpj', formData.cnpj || '');
       // formDataToSend.append('email', formData.email);
