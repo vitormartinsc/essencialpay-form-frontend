@@ -12,7 +12,7 @@ const Header: React.FC = () => {
     <Box 
       sx={{
         width: '100%',
-        height: '80px',
+        height: '60px',
         background: 'transparent',
         display: 'flex',
         alignItems: 'center',
@@ -22,53 +22,6 @@ const Header: React.FC = () => {
         position: 'relative',
       }}
     >
-      {/* Instagram lado esquerdo - Desktop apenas */}
-      <Box sx={{ 
-        position: 'absolute',
-        left: '20px',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        '@media (max-width: 768px)': {
-          display: 'none',
-        },
-      }}>
-        <Button
-          onClick={handleInstagramClick}
-          startIcon={<Instagram />}
-          sx={{
-            color: '#ffffff',
-            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            borderRadius: '20px',
-            padding: '8px 16px',
-            fontSize: '14px',
-            fontWeight: 500,
-            textTransform: 'none',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            transition: 'all 0.3s ease',
-            minWidth: 'auto',
-            '&:hover': {
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              transform: 'scale(1.05)',
-              borderColor: 'rgba(255, 255, 255, 0.3)',
-            },
-            '&:active': {
-              transform: 'scale(0.95)',
-            },
-          }}
-        >
-          <Typography 
-            variant="body2" 
-            sx={{ 
-              fontSize: 'inherit',
-              fontWeight: 'inherit',
-              color: '#ffffff',
-            }}
-          >
-            @essencial.ai
-          </Typography>
-        </Button>
-      </Box>
-
       {/* Logo centralizada */}
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <EssencialLogo 
@@ -83,10 +36,10 @@ const Header: React.FC = () => {
         />
       </Box>
       
-      {/* Instagram lado direito - Sempre visível */}
+      {/* Instagram no canto direito */}
       <Box sx={{ 
         position: 'absolute',
-        right: '20px',
+        right: '40px',
         top: '50%',
         transform: 'translateY(-50%)',
       }}>

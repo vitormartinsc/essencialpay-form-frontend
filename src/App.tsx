@@ -56,7 +56,7 @@ function App() {
           flexDirection: 'column',
           alignItems: 'center',
         }}>
-          <Box sx={{ width: '100%', minHeight: '80px', display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ width: '100%', minHeight: '60px', display: 'flex', alignItems: 'center' }}>
             <Header />
           </Box>
           <div style={{
@@ -72,7 +72,7 @@ function App() {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'flex-start',
-            paddingTop: '20px',
+            paddingTop: '10px',
           }}>
             <Routes>
               <Route path="/" element={<Navigate to="/cadastro" replace />} />
