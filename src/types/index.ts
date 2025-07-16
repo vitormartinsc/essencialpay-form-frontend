@@ -1,9 +1,11 @@
 export interface FormData {
+  // TODO: Reativar quando necessário - informações pessoais básicas
   fullName: string;
   cpf: string;
   cnpj?: string;
   email: string;
   phone: string;
+  // TODO: Reativar quando necessário - informações de endereço
   cep: string;
   state: string;
   city: string;
@@ -11,12 +13,12 @@ export interface FormData {
   street: string;
   number: string;
   complement?: string;
-  // Dados bancários
+  // Dados bancários - ATIVOS
   bankName: string;
   accountType: string;
   agency: string;
   account: string;
-  // Documentos
+  // Documentos - ATIVOS
   documentType: string;
   documentFront: File | null;
   documentBack: File | null;
@@ -25,11 +27,13 @@ export interface FormData {
 }
 
 export interface FormErrors {
+  // TODO: Reativar quando necessário - informações pessoais básicas
   fullName?: string;
   cpf?: string;
   cnpj?: string;
   email?: string;
   phone?: string;
+  // TODO: Reativar quando necessário - informações de endereço
   cep?: string;
   state?: string;
   city?: string;
@@ -37,12 +41,12 @@ export interface FormErrors {
   street?: string;
   number?: string;
   complement?: string;
-  // Dados bancários
+  // Dados bancários - ATIVOS
   bankName?: string;
   accountType?: string;
   agency?: string;
   account?: string;
-  // Documentos
+  // Documentos - ATIVOS
   documentType?: string;
   documentFront?: string;
   documentBack?: string;

@@ -16,11 +16,12 @@ import {
   formatCep,
   formatAgency,
   formatAccount,
-  validateCpf,
-  validateCnpj,
-  validateEmail,
-  validatePhone,
-  validateCep,
+  // TODO: Reativar quando necessário - validações de informações pessoais
+  // validateCpf,
+  // validateCnpj,
+  // validateEmail,
+  // validatePhone,
+  // validateCep,
   validateAccount,
 } from '../utils/formatters';
 import { getErrorMessages, isValidImage } from '../utils/formHelpers';
@@ -29,19 +30,23 @@ import config from '../config/index';
 import './EssencialForm.css';
 
 // Importação dos componentes das etapas
-import PersonalInfoStep from './FormSteps/PersonalInfoStep';
-import AddressStep from './FormSteps/AddressStep';
+// TODO: Reativar quando necessário - informações pessoais básicas
+// import PersonalInfoStep from './FormSteps/PersonalInfoStep';
+// TODO: Reativar quando necessário - informações de endereço
+// import AddressStep from './FormSteps/AddressStep';
 import BankingStep from './FormSteps/BankingStep';
 import DocumentsStep from './FormSteps/DocumentsStep';
 import ConsentStep from './FormSteps/ConsentStep';
 
 const UserForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
+    // TODO: Reativar quando necessário - informações pessoais básicas
     fullName: '',
     cpf: '',
     cnpj: '',
     email: '',
     phone: '',
+    // TODO: Reativar quando necessário - informações de endereço
     cep: '',
     state: '',
     city: '',
@@ -49,10 +54,12 @@ const UserForm: React.FC = () => {
     street: '',
     number: '',
     complement: '',
+    // Dados bancários - ATIVOS
     bankName: '',
     accountType: '',
     agency: '',
     account: '',
+    // Documentos - ATIVOS
     documentType: 'RG',
     documentFront: null,
     documentBack: null,
@@ -63,7 +70,8 @@ const UserForm: React.FC = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [searchingCep, setSearchingCep] = useState(false);
+  // TODO: Reativar quando necessário - usado para busca de CEP
+  // const [searchingCep, setSearchingCep] = useState(false);
   const [showValidationAlert, setShowValidationAlert] = useState(false);
   const [consentAccepted, setConsentAccepted] = useState(false);
 
@@ -200,7 +208,8 @@ const UserForm: React.FC = () => {
     }
   };
 
-  // Função para buscar dados do CEP
+  // Função para buscar dados do CEP - DESATIVADA TEMPORARIAMENTE
+  /*
   const handleCepBlur = async () => {
     const cleanCep = formData.cep.replace(/\D/g, '');
     
@@ -245,10 +254,13 @@ const UserForm: React.FC = () => {
       }
     }
   };
+  */
 
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
 
+    // TODO: Reativar quando necessário - validações de informações pessoais
+    /*
     if (!formData.fullName.trim()) {
       newErrors.fullName = 'Nome completo é obrigatório';
     }
@@ -275,7 +287,10 @@ const UserForm: React.FC = () => {
     } else if (!validatePhone(formData.phone)) {
       newErrors.phone = 'Telefone inválido';
     }
+    */
 
+    // TODO: Reativar quando necessário - validações de endereço
+    /*
     if (!formData.cep) {
       newErrors.cep = 'CEP é obrigatório';
     } else if (!validateCep(formData.cep)) {
@@ -301,8 +316,9 @@ const UserForm: React.FC = () => {
     if (!formData.number.trim()) {
       newErrors.number = 'Número é obrigatório';
     }
+    */
 
-    // Validação dos dados bancários
+    // Validação dos dados bancários - ATIVO
     if (!formData.bankName.trim()) {
       newErrors.bankName = 'Nome do banco é obrigatório';
     }
@@ -321,7 +337,7 @@ const UserForm: React.FC = () => {
       newErrors.account = 'Conta deve ter entre 6 e 7 dígitos';
     }
 
-    // Validação dos documentos
+    // Validação dos documentos - ATIVO
     if (formData.documentType === 'RG') {
       if (!formData.documentFront) {
         newErrors.documentFront = 'Obrigatório enviar a frente do RG';
@@ -339,7 +355,7 @@ const UserForm: React.FC = () => {
       newErrors.residenceProof = 'Comprovante de residência é obrigatório';
     }
 
-    // Validação da selfie (obrigatória para ambos os tipos de documento)
+    // Validação da selfie (obrigatória para ambos os tipos de documento) - ATIVO
     if (!formData.selfie) {
       newErrors.selfie = 'Selfie é obrigatória';
     }
@@ -372,22 +388,29 @@ const UserForm: React.FC = () => {
       const formDataToSend = new FormData();
       
       // Adicionar todos os campos de texto
-      formDataToSend.append('fullName', formData.fullName);
-      formDataToSend.append('cpf', formData.cpf);
-      formDataToSend.append('cnpj', formData.cnpj || '');
-      formDataToSend.append('email', formData.email);
-      formDataToSend.append('phone', formData.phone);
-      formDataToSend.append('cep', formData.cep);
-      formDataToSend.append('state', formData.state);
-      formDataToSend.append('city', formData.city);
-      formDataToSend.append('neighborhood', formData.neighborhood);
-      formDataToSend.append('street', formData.street);
-      formDataToSend.append('number', formData.number);
-      formDataToSend.append('complement', formData.complement || '');
+      // TODO: Reativar quando necessário - informações pessoais básicas
+      // formDataToSend.append('fullName', formData.fullName);
+      // formDataToSend.append('cpf', formData.cpf);
+      // formDataToSend.append('cnpj', formData.cnpj || '');
+      // formDataToSend.append('email', formData.email);
+      // formDataToSend.append('phone', formData.phone);
+      
+      // TODO: Reativar quando necessário - informações de endereço
+      // formDataToSend.append('cep', formData.cep);
+      // formDataToSend.append('state', formData.state);
+      // formDataToSend.append('city', formData.city);
+      // formDataToSend.append('neighborhood', formData.neighborhood);
+      // formDataToSend.append('street', formData.street);
+      // formDataToSend.append('number', formData.number);
+      // formDataToSend.append('complement', formData.complement || '');
+      
+      // Dados bancários - ATIVOS
       formDataToSend.append('bankName', formData.bankName);
       formDataToSend.append('accountType', formData.accountType);
       formDataToSend.append('agency', formData.agency);
       formDataToSend.append('account', formData.account);
+      
+      // Documentos - ATIVOS
       formDataToSend.append('documentType', formData.documentType);
       
       // Adicionar arquivos se existirem
@@ -427,34 +450,115 @@ const UserForm: React.FC = () => {
 
   if (submitted) {
     return (
-      <Container maxWidth="sm" sx={{ 
-        mt: 4, 
-        backgroundColor: '#ffffff', 
-        borderRadius: '15px', 
-        padding: '25px', 
-        boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)' 
-      }}>
-        <Alert 
-          severity="success" 
-          sx={{ 
-            mt: 2, 
-            mb: 2, 
-            background: '#e8f5e8', 
-            color: '#2e7d32', 
-            border: '1px solid #4caf50', 
-            fontWeight: 500, 
-            textAlign: 'center',
-            boxShadow: '0 2px 8px 0 rgba(0,0,0,0.04)' 
-          }}
-        >
-          <Typography variant="h6" gutterBottom>
-            Formulário enviado com sucesso!
-          </Typography>
-          <Typography variant="body2">
-            Obrigado por preencher suas informações.
-          </Typography>
-        </Alert>
-      </Container>
+      <Paper
+        elevation={0}
+        sx={{ 
+          maxWidth: '500px',
+          margin: '0 auto',
+          backgroundColor: '#ffffff', 
+          borderRadius: '20px', 
+          padding: '48px 32px', 
+          boxShadow: '0 12px 32px rgba(0, 51, 255, 0.08), 0 2px 16px rgba(0, 51, 255, 0.04)',
+          textAlign: 'center',
+          position: 'relative',
+          overflow: 'hidden',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background: 'linear-gradient(90deg, #4CAF50 0%, #66BB6A 100%)',
+            borderRadius: '20px 20px 0 0',
+          },
+          '@media (max-width:600px)': {
+            margin: '0 16px',
+            padding: '40px 24px',
+          },
+        }}
+      >
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center',
+          gap: 3,
+        }}>
+          <Box sx={{
+            width: '80px',
+            height: '80px',
+            backgroundColor: '#4CAF50',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '36px',
+            color: 'white',
+            fontWeight: 'bold',
+            animation: 'pulse 2s infinite',
+            '@keyframes pulse': {
+              '0%': { transform: 'scale(1)' },
+              '50%': { transform: 'scale(1.1)' },
+              '100%': { transform: 'scale(1)' },
+            },
+          }}>
+            ✓
+          </Box>
+          
+          <Box>
+            <Typography variant="h4" sx={{ 
+              color: '#4CAF50',
+              fontWeight: 700,
+              mb: 2,
+              fontSize: '2rem',
+            }}>
+              Enviado com Sucesso!
+            </Typography>
+            <Typography variant="body1" sx={{ 
+              color: '#666',
+              fontSize: '1.1rem',
+              mb: 3,
+              lineHeight: 1.6,
+            }}>
+              Seus dados bancários e documentos foram enviados com sucesso. 
+              Nossa equipe irá analisá-los e entrar em contato em breve.
+            </Typography>
+          </Box>
+
+          <Box sx={{
+            width: '100%',
+            p: 3,
+            backgroundColor: '#F1F8E9',
+            borderRadius: '12px',
+            border: '1px solid rgba(76, 175, 80, 0.2)',
+          }}>
+            <Typography variant="body2" sx={{ 
+              color: '#388E3C',
+              fontWeight: 500,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 1,
+            }}>
+              <Box sx={{ 
+                width: '16px', 
+                height: '16px', 
+                backgroundColor: '#4CAF50',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '10px',
+                color: 'white',
+                fontWeight: 'bold',
+              }}>
+                ✓
+              </Box>
+              Obrigado pela confiança!
+            </Typography>
+          </Box>
+        </Box>
+      </Paper>
     );
   }
 
@@ -465,29 +569,76 @@ const UserForm: React.FC = () => {
       sx={{
         backgroundColor: '#FFFFFF',
         color: '#0033ff',
-        padding: '32px 24px',
-        borderRadius: '8px',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        padding: '40px 32px',
+        borderRadius: '20px',
+        boxShadow: '0 12px 32px rgba(0, 51, 255, 0.08), 0 2px 16px rgba(0, 51, 255, 0.04)',
         width: '100%',
-        maxWidth: '450px',
+        maxWidth: '500px',
         margin: '0 auto',
         boxSizing: 'border-box',
+        position: 'relative',
+        overflow: 'hidden',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '4px',
+          background: 'linear-gradient(90deg, #0033ff 0%, #0056FF 50%, #0033ff 100%)',
+          borderRadius: '20px 20px 0 0',
+        },
+        '@media (max-width:600px)': {
+          margin: '0 16px',
+          padding: '32px 24px',
+          borderRadius: '16px',
+        },
       }}
     >
-      <Typography 
-        variant="h4" 
-        component="h1" 
-        gutterBottom 
-        sx={{ 
-          textAlign: 'center', 
-          color: '#0033ff', 
-          fontWeight: 600,
-          fontSize: '2rem',
-          mb: 3 
-        }}
-      >
-        Cadastro Essencial
-      </Typography>
+      <Box sx={{ 
+        textAlign: 'center', 
+        mb: 4,
+        position: 'relative',
+      }}>
+        <Typography 
+          variant="h4" 
+          component="h1" 
+          gutterBottom 
+          sx={{ 
+            color: '#0033ff', 
+            fontWeight: 700,
+            fontSize: '2.2rem',
+            mb: 1,
+            background: 'linear-gradient(135deg, #0033ff 0%, #0056FF 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            '@media (max-width:600px)': {
+              fontSize: '1.8rem',
+            },
+          }}
+        >
+          Cadastro Bancário
+        </Typography>
+        <Typography 
+          variant="body1" 
+          sx={{ 
+            color: '#666',
+            fontSize: '1rem',
+            fontWeight: 400,
+            mb: 2,
+          }}
+        >
+          Preencha os dados bancários e anexe os documentos necessários
+        </Typography>
+        <Box sx={{
+          width: '60px',
+          height: '3px',
+          background: 'linear-gradient(90deg, #0033ff 0%, #0056FF 100%)',
+          borderRadius: '2px',
+          margin: '0 auto',
+        }} />
+      </Box>
 
       {showValidationAlert && (
         <Alert 
@@ -495,20 +646,26 @@ const UserForm: React.FC = () => {
           sx={{ 
             mt: 2, 
             mb: 3, 
-            background: '#ffebee', 
-            color: '#c62828', 
-            border: '1px solid #f44336', 
+            background: 'linear-gradient(135deg, #FFEBEE 0%, #FCE4EC 100%)', 
+            color: '#C62828', 
+            border: '1px solid rgba(198, 40, 40, 0.2)', 
             fontWeight: 500, 
-            borderRadius: '8px',
-            boxShadow: '0 2px 8px 0 rgba(0,0,0,0.1)' 
+            borderRadius: '16px',
+            boxShadow: '0 4px 12px rgba(198, 40, 40, 0.08)',
+            padding: '16px 20px',
+            '& .MuiAlert-icon': {
+              color: '#C62828',
+              fontSize: '1.5rem',
+            },
           }}
         >
-          <Typography variant="h6" gutterBottom sx={{ color: '#c62828' }}>
-            Atenção! Existem campos obrigatórios não preenchidos:
+          <Typography variant="h6" gutterBottom sx={{ color: '#C62828', fontWeight: 600 }}>
+            ⚠️ Campos obrigatórios em falta
           </Typography>
           <Box component="ul" sx={{ pl: 0, m: 0 }}>
             {getErrorMessages(errors).map((message, index) => (
-              <Typography key={index} variant="body2" sx={{ mb: 0.5 }}>
+              <Typography key={index} variant="body2" sx={{ mb: 0.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box sx={{ width: '4px', height: '4px', backgroundColor: '#C62828', borderRadius: '50%' }} />
                 {message}
               </Typography>
             ))}
@@ -520,88 +677,156 @@ const UserForm: React.FC = () => {
         severity="info" 
         sx={{ 
           mt: 2, 
-          mb: 3, 
-          background: '#FFD700', 
+          mb: 4, 
+          background: 'linear-gradient(135deg, #E3F2FD 0%, #F3E5F5 100%)', 
           color: '#0056FF', 
-          border: 'none',
+          border: '1px solid rgba(0, 86, 255, 0.2)',
           fontWeight: 500, 
           textAlign: 'center',
-          borderRadius: '4px',
+          borderRadius: '12px',
+          padding: '16px 20px',
+          boxShadow: '0 4px 12px rgba(0, 86, 255, 0.08)',
           '& .MuiAlert-icon': {
-            color: '#0056FF'
-          }
+            color: '#0056FF',
+            fontSize: '1.5rem',
+          },
+          '& .MuiAlert-message': {
+            fontSize: '0.95rem',
+            fontWeight: 500,
+          },
         }}
       >
-        Preencha todos os campos com suas informações pessoais.
+        <Typography variant="body1" sx={{ fontWeight: 600 }}>
+          🏦 Dados Bancários e Documentos
+        </Typography>
+        <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.9 }}>
+          Certifique-se de que todos os dados estão corretos antes de enviar
+        </Typography>
       </Alert>
 
-      <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
-        {/* Informações Pessoais */}
-        <PersonalInfoStep
-          formData={formData}
-          errors={errors}
-          onFieldChange={handleChange}
-          fieldStyles={fieldStyles}
-          labelProps={labelProps}
-        />
+      <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+        {/* Dados Bancários - ATIVO */}
+        <Box sx={{ 
+          mb: 4,
+          p: 3,
+          backgroundColor: '#FAFBFF',
+          borderRadius: '16px',
+          border: '1px solid rgba(0, 86, 255, 0.08)',
+          position: 'relative',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: '20px',
+            width: '40px',
+            height: '3px',
+            background: 'linear-gradient(90deg, #0033ff 0%, #0056FF 100%)',
+            borderRadius: '0 0 2px 2px',
+          }
+        }}>
+          <BankingStep
+            formData={formData}
+            errors={errors}
+            onFieldChange={handleChange}
+            onSelectChange={handleSelectChange}
+            fieldStyles={fieldStyles}
+            selectFieldStyles={selectFieldStyles}
+            labelProps={labelProps}
+          />
+        </Box>
 
-        {/* Endereço */}
-        <AddressStep
-          formData={formData}
-          errors={errors}
-          searchingCep={searchingCep}
-          onFieldChange={handleChange}
-          onCepBlur={handleCepBlur}
-          fieldStyles={fieldStyles}
-          labelProps={labelProps}
-        />
-
-        {/* Dados Bancários */}
-        <BankingStep
-          formData={formData}
-          errors={errors}
-          onFieldChange={handleChange}
-          onSelectChange={handleSelectChange}
-          fieldStyles={fieldStyles}
-          selectFieldStyles={selectFieldStyles}
-          labelProps={labelProps}
-        />
-
-        {/* Documentos */}
-        <DocumentsStep
-          formData={formData}
-          errors={errors}
-          onDocumentTypeChange={handleDocumentTypeChange}
-          onFileChange={handleFileChange}
-          setFormData={setFormData}
-        />
+        {/* Documentos - ATIVO */}
+        <Box sx={{ 
+          mb: 4,
+          p: 3,
+          backgroundColor: '#FAFBFF',
+          borderRadius: '16px',
+          border: '1px solid rgba(0, 86, 255, 0.08)',
+          position: 'relative',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: '20px',
+            width: '40px',
+            height: '3px',
+            background: 'linear-gradient(90deg, #0033ff 0%, #0056FF 100%)',
+            borderRadius: '0 0 2px 2px',
+          }
+        }}>
+          <DocumentsStep
+            formData={formData}
+            errors={errors}
+            onDocumentTypeChange={handleDocumentTypeChange}
+            onFileChange={handleFileChange}
+            setFormData={setFormData}
+          />
+        </Box>
 
         {showValidationAlert && (
           <Alert 
             severity="warning" 
             sx={{ 
               mt: 3, 
-              mb: 2, 
-              background: '#fff3e0', 
-              color: '#ef6c00', 
-              border: '1px solid #ff9800', 
+              mb: 3, 
+              background: 'linear-gradient(135deg, #FFF8E1 0%, #FFF3E0 100%)', 
+              color: '#E65100', 
+              border: '1px solid rgba(230, 81, 0, 0.2)', 
               fontWeight: 500, 
-              borderRadius: '8px',
-              boxShadow: '0 2px 8px 0 rgba(0,0,0,0.1)' 
+              borderRadius: '12px',
+              boxShadow: '0 4px 12px rgba(230, 81, 0, 0.08)',
+              padding: '16px 20px',
+              '& .MuiAlert-icon': {
+                color: '#E65100',
+                fontSize: '1.25rem',
+              },
             }}
           >
-            <Typography variant="body2" sx={{ fontWeight: 600 }}>
-              ⚠️ Revise os campos destacados em vermelho antes de enviar
+            <Typography variant="body2" sx={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ 
+                width: '20px', 
+                height: '20px', 
+                backgroundColor: '#E65100',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '12px',
+                color: 'white',
+                fontWeight: 'bold',
+              }}>
+                !
+              </Box>
+              Revise os campos destacados antes de enviar
             </Typography>
           </Alert>
         )}
 
         {/* Consentimento */}
-        <ConsentStep
-          consentAccepted={consentAccepted}
-          setConsentAccepted={setConsentAccepted}
-          errors={errors}
-        />
+        <Box sx={{ 
+          mb: 4,
+          p: 3,
+          backgroundColor: '#FAFBFF',
+          borderRadius: '16px',
+          border: '1px solid rgba(0, 86, 255, 0.08)',
+          position: 'relative',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: '20px',
+            width: '40px',
+            height: '3px',
+            background: 'linear-gradient(90deg, #0033ff 0%, #0056FF 100%)',
+            borderRadius: '0 0 2px 2px',
+          }
+        }}>
+          <ConsentStep
+            consentAccepted={consentAccepted}
+            setConsentAccepted={setConsentAccepted}
+            errors={errors}
+          />
+        </Box>
 
         <Button
           fullWidth
@@ -610,43 +835,106 @@ const UserForm: React.FC = () => {
           type="submit"
           disabled={loading}
           sx={{ 
-            mt: 3, 
-            backgroundColor: '#0033ff', 
+            mt: 2, 
+            mb: 3,
+            background: 'linear-gradient(135deg, #0033ff 0%, #0056FF 100%)',
             color: '#fff', 
-            fontWeight: 'bold', 
-            borderRadius: '12px',
-            minHeight: '36px',
-            paddingLeft: '20px',
-            paddingRight: '20px',
-            fontSize: '15px',
-            boxShadow: 'none', 
+            fontWeight: 600, 
+            borderRadius: '16px',
+            minHeight: '52px',
+            paddingLeft: '32px',
+            paddingRight: '32px',
+            fontSize: '16px',
+            boxShadow: '0 8px 24px rgba(0, 51, 255, 0.24)', 
             textTransform: 'none',
-            '@media (max-width:600px)': {
+            position: 'relative',
+            overflow: 'hidden',
+            transition: 'all 0.3s ease',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: '-100%',
               width: '100%',
+              height: '100%',
+              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+              transition: 'left 0.5s ease',
             },
             '&:hover': { 
-              backgroundColor: '#0022aa' 
+              background: 'linear-gradient(135deg, #0022aa 0%, #003f8a 100%)',
+              transform: 'translateY(-2px)',
+              boxShadow: '0 12px 32px rgba(0, 51, 255, 0.32)',
+              '&::before': {
+                left: '100%',
+              },
+            },
+            '&:active': {
+              transform: 'translateY(0px)',
             },
             '&:disabled': {
-              backgroundColor: '#ccc',
-              color: '#666',
+              background: '#E0E0E0',
+              color: '#9E9E9E',
+              boxShadow: 'none',
+              transform: 'none',
+            },
+            '@media (max-width:600px)': {
+              minHeight: '48px',
+              fontSize: '15px',
             },
           }}
         >
-          {loading ? <CircularProgress size={20} sx={{ color: '#fff' }} /> : 'Enviar Cadastro'}
+          {loading ? (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <CircularProgress size={20} sx={{ color: '#fff' }} />
+              <Typography>Enviando...</Typography>
+            </Box>
+          ) : (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography sx={{ fontWeight: 600 }}>Enviar Cadastro</Typography>
+              <Typography sx={{ fontSize: '18px' }}>→</Typography>
+            </Box>
+          )}
         </Button>
         
-        <Typography 
-          variant="body2" 
-          sx={{ 
-            mt: 3, 
-            color: '#666', 
-            textAlign: 'center', 
-            fontSize: '0.9rem',
-          }}
-        >
-          Seus dados serão tratados com segurança e confidencialidade.
-        </Typography>
+        <Box sx={{ 
+          textAlign: 'center',
+          mt: 2,
+          p: 3,
+          backgroundColor: '#F8F9FF',
+          borderRadius: '12px',
+          border: '1px solid rgba(0, 86, 255, 0.1)',
+        }}>
+          <Typography 
+            variant="body2" 
+            sx={{ 
+              color: '#666', 
+              fontSize: '0.9rem',
+              fontWeight: 400,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 2,
+              flexWrap: 'wrap',
+            }}
+          >
+            <Box sx={{ 
+              width: '20px', 
+              height: '20px', 
+              backgroundColor: '#4CAF50',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '12px',
+              color: 'white',
+              fontWeight: 'bold',
+              flexShrink: 0,
+            }}>
+              ✓
+            </Box>
+            <span>Seus dados serão tratados com segurança e confidencialidade</span>
+          </Typography>
+        </Box>
       </Box>
     </Paper>
   );
