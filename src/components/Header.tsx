@@ -66,8 +66,11 @@ const Header: React.FC = () => {
               transform: 'scale(0.95)',
             },
             '@media (max-width: 768px)': {
-              padding: '6px 8px',
-              fontSize: '12px',
+              padding: '8px',
+              minWidth: '40px',
+              '& .MuiButton-startIcon': {
+                margin: 0,
+              },
             },
           }}
         >
