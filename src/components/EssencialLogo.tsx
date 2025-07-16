@@ -7,6 +7,10 @@ interface EssencialLogoProps {
 }
 
 const EssencialLogo: React.FC<EssencialLogoProps> = ({ className, style }) => {
+  const handleLogoClick = () => {
+    window.open('https://creditoessencial.com.br/', '_blank');
+  };
+
   return (
     <img 
       src={payLogo}
@@ -17,7 +21,16 @@ const EssencialLogo: React.FC<EssencialLogoProps> = ({ className, style }) => {
         height: '40px', 
         maxWidth: '200px',
         objectFit: 'contain',
+        cursor: 'pointer',
+        transition: 'opacity 0.3s ease',
         ...style 
+      }}
+      onClick={handleLogoClick}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.opacity = '0.8';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.opacity = '1';
       }}
     />
   );

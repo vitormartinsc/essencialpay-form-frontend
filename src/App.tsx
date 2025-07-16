@@ -1,4 +1,4 @@
-import { ThemeProvider, createTheme, CssBaseline } from '@mui/material'
+import { ThemeProvider, createTheme, CssBaseline, Box } from '@mui/material'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import UserForm from './components/UserForm'
 import Header from './components/Header'
@@ -56,7 +56,9 @@ function App() {
           flexDirection: 'column',
           alignItems: 'center',
         }}>
-          <Header />
+          <Box sx={{ width: '100%', minHeight: '80px', display: 'flex', alignItems: 'center' }}>
+            <Header />
+          </Box>
           <div style={{
             width: '100%',
             maxWidth: '800px',

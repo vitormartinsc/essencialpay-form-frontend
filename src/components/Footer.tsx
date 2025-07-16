@@ -1,9 +1,14 @@
 import React from 'react';
-import { Box, Typography, Link } from '@mui/material';
+import { Box, Typography, Link, Button } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import { Instagram } from '@mui/icons-material';
 import EssencialLogo from './EssencialLogo';
 
 const Footer: React.FC = () => {
+  const handleInstagramClick = () => {
+    window.open('https://instagram.com/essencial.ai', '_blank');
+  };
+
   return (
     <Box 
       className="App-footer-full"
@@ -51,6 +56,44 @@ const Footer: React.FC = () => {
             padding: 0,
           }}
         />
+        
+        {/* Instagram Link - Topo */}
+        <Box sx={{ mb: 3 }}>
+          <Button
+            onClick={handleInstagramClick}
+            startIcon={<Instagram />}
+            sx={{
+              color: '#ffffff',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '20px',
+              padding: '8px 16px',
+              fontSize: '14px',
+              fontWeight: 500,
+              textTransform: 'none',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                transform: 'scale(1.05)',
+                borderColor: 'rgba(255, 255, 255, 0.3)',
+              },
+              '&:active': {
+                transform: 'scale(0.95)',
+              },
+            }}
+          >
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                fontSize: 'inherit',
+                fontWeight: 'inherit',
+                color: '#ffffff',
+              }}
+            >
+              @essencial.ai
+            </Typography>
+          </Button>
+        </Box>
         
         {/* Company Info */}
         <Box
@@ -105,7 +148,7 @@ const Footer: React.FC = () => {
           </Typography>
 
           {/* Links para Termos e Política */}
-          <Box sx={{ mt: 2, display: 'flex', gap: 3, flexWrap: 'wrap', justifyContent: 'center' }}>
+          <Box sx={{ mt: 2, mb: 2, display: 'flex', gap: 3, flexWrap: 'wrap', justifyContent: 'center' }}>
             <Link
               component={RouterLink}
               to="/termos-de-uso"
@@ -136,6 +179,44 @@ const Footer: React.FC = () => {
             >
               Política de Privacidade
             </Link>
+          </Box>
+
+          {/* Instagram Link - Rodapé */}
+          <Box sx={{ mt: 1 }}>
+            <Button
+              onClick={handleInstagramClick}
+              startIcon={<Instagram />}
+              sx={{
+                color: '#ffffff',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '20px',
+                padding: '6px 12px',
+                fontSize: '12px',
+                fontWeight: 500,
+                textTransform: 'none',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  transform: 'scale(1.05)',
+                  borderColor: 'rgba(255, 255, 255, 0.3)',
+                },
+                '&:active': {
+                  transform: 'scale(0.95)',
+                },
+              }}
+            >
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  fontSize: 'inherit',
+                  fontWeight: 'inherit',
+                  color: '#ffffff',
+                }}
+              >
+                @essencial.ai
+              </Typography>
+            </Button>
           </Box>
         </Box>
       </Box>
