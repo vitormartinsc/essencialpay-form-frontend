@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   TextField, 
   Typography, 
   Box, 
   FormControl, 
-  InputLabel, 
-  Select, 
-  MenuItem 
+  Autocomplete,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import type { FormData, FormErrors } from '../../types';
 
@@ -16,31 +17,31 @@ const BRAZILIAN_BANKS = [
   'Bradesco',
   'Caixa Econômica Federal',
   'Santander',
-  'Banco Inter',
+  'Inter',
   'Nubank',
   'BTG Pactual',
   'Safra',
-  'Banco Original',
-  'Banco Pan',
-  'Banco BMG',
-  'Banco Daycoval',
-  'Banco Pine',
-  'Banco Mercantil do Brasil',
-  'Banco Sofisa',
-  'Banco Votorantim',
+  'Original',
+  'Pan',
+  'BMG',
+  'Daycoval',
+  'Pine',
+  'Mercantil do Brasil',
+  'Sofisa',
+  'Votorantim',
   'C6 Bank',
   'Neon',
   'Next',
-  'Banco Modal',
-  'Banco Fibra',
-  'Banco Rendimento',
-  'Banco Industrial do Brasil',
-  'Banco Paulista',
-  'Banco Topázio',
-  'Banco Alfa',
-  'Banco Bonsucesso',
-  'Banco Máxima',
-  'Banco Ourinvest',
+  'Modal',
+  'Fibra',
+  'Rendimento',
+  'Industrial do Brasil',
+  'Paulista',
+  'Topázio',
+  'Alfa',
+  'Bonsucesso',
+  'Máxima',
+  'Ourinvest',
   'PagBank',
   'Banco do Nordeste',
   'Banco da Amazônia',
@@ -48,9 +49,8 @@ const BRAZILIAN_BANKS = [
   'Banco de Brasília',
   'Banrisul',
   'Banestes',
-  'Banco Cooperativo Sicredi',
-  'Unicred',
-  'Outros'
+  'Sicredi',
+  'Unicred'
 ].sort();
 
 interface BankingStepProps {
@@ -72,39 +72,58 @@ const BankingStep: React.FC<BankingStepProps> = ({
   selectFieldStyles,
   labelProps
 }) => {
+  const handleBankChange = (_event: any, newValue: string | null) => {
+    onSelectChange({
+      target: {
+        name: 'bankName',
+        value: newValue || ''
+      }
+    });
+  };
+
+  const handleBankInputChange = (_event: any, newInputValue: string) => {
+    // Captura o valor digitado mesmo quando não há seleção
+    onSelectChange({
+      target: {
+        name: 'bankName',
+        value: newInputValue || ''
+      }
+    });
+  };
+
   return (
     <>
       <Typography variant="h6" sx={{ color: '#0033ff', mb: 2, mt: 3, fontSize: '1.1rem', fontWeight: 600 }}>
         Dados Bancários
       </Typography>
 
-      <FormControl 
-        fullWidth 
-        margin="normal" 
-        error={!!errors.bankName}
-        sx={selectFieldStyles}
-      >
-        <InputLabel sx={labelProps.sx}>
-          Nome do Banco
-        </InputLabel>
-        <Select
-          name="bankName"
-          value={formData.bankName}
-          onChange={onSelectChange}
-          label="Nome do Banco"
-        >
-          {BRAZILIAN_BANKS.map((bank) => (
-            <MenuItem key={bank} value={bank}>
-              {bank}
-            </MenuItem>
-          ))}
-        </Select>
-        {errors.bankName && (
-          <Typography variant="caption" color="error" sx={{ ml: 2, mt: 0.5 }}>
-            {errors.bankName}
-          </Typography>
+      <Autocomplete
+        options={BRAZILIAN_BANKS}
+        value={formData.bankName || ''}
+        onChange={handleBankChange}
+        onInputChange={handleBankInputChange}
+        freeSolo
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Nome do Banco"
+            fullWidth
+            margin="normal"
+            error={!!errors.bankName}
+            helperText={errors.bankName}
+            InputLabelProps={labelProps}
+            sx={fieldStyles}
+          />
         )}
-      </FormControl>
+        sx={{
+          '& .MuiAutocomplete-inputRoot': {
+            borderRadius: '15px',
+          },
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '15px',
+          }
+        }}
+      />
 
       <FormControl 
         fullWidth 
