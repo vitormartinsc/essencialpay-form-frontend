@@ -1,6 +1,7 @@
 import React from 'react';
-import { TextField, Typography, Box } from '@mui/material';
+import { TextField, Typography, Box, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import type { FormData, FormErrors } from '../../types';
+import { brazilianStates } from '../../utils/states';
 
 interface AddressStepProps {
   formData: FormData;
@@ -8,6 +9,7 @@ interface AddressStepProps {
   searchingCep: boolean;
   onFieldChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onCepBlur: () => void;
+  onSelectChange: (e: any) => void;
   fieldStyles: any;
   labelProps: any;
 }
@@ -18,6 +20,7 @@ const AddressStep: React.FC<AddressStepProps> = ({
   searchingCep,
   onFieldChange,
   onCepBlur,
+  onSelectChange,
   fieldStyles,
   labelProps
 }) => {
@@ -51,22 +54,86 @@ const AddressStep: React.FC<AddressStepProps> = ({
         mb: 1
       }}>
         <Box sx={{ flex: 1 }}>
-          <TextField
-            fullWidth
-            label="Estado (UF)"
-            name="state"
-            value={formData.state}
-            onChange={onFieldChange}
-            error={!!errors.state}
-            helperText={errors.state}
-            placeholder="Ex: SP, RJ, MG"
-            InputLabelProps={labelProps}
-            sx={{
-              ...fieldStyles,
-              mt: 0,
-              mb: 0
-            }}
-          />
+          <FormControl fullWidth error={!!errors.state}>
+            <InputLabel 
+              id="state-select-label" 
+              sx={{ 
+                fontSize: '0.95rem',
+                fontWeight: 500, 
+                color: '#0033ff',
+                '&.Mui-focused': {
+                  color: '#0033ff',
+                },
+                '&.MuiInputLabel-shrink': {
+                  backgroundColor: '#fff',
+                  paddingX: '4px',
+                }
+              }}
+            >
+              Estado
+            </InputLabel>
+            <Select
+              labelId="state-select-label"
+              name="state"
+              value={formData.state}
+              onChange={onSelectChange}
+              label="Estado"
+              sx={{
+                height: '56px',
+                fontSize: '1rem',
+                backgroundColor: '#fff',
+                color: '#0033ff',
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                '&:focus-within': {
+                  border: '1px solid #0033ff',
+                  boxShadow: '0 0 6px rgba(0, 51, 255, 0.5)',
+                },
+                '&:hover': {
+                  borderColor: '#0033ff',
+                },
+                '& .MuiSelect-select': {
+                  padding: '16px 14px !important',
+                  height: 'auto',
+                  display: 'flex',
+                  alignItems: 'center',
+                  minHeight: '24px',
+                  lineHeight: '1.4375em',
+                  backgroundColor: 'transparent !important',
+                  border: 'none !important',
+                  '&:focus': {
+                    backgroundColor: 'transparent !important',
+                  },
+                },
+                '& .MuiSelect-icon': {
+                  color: '#0033ff',
+                  right: '8px',
+                },
+                '& .MuiOutlinedInput-notchedOutline': {
+                  display: 'none !important',
+                },
+                '& .MuiInputLabel-root': {
+                  transform: 'translate(14px, 16px) scale(1)',
+                  '&.MuiInputLabel-shrink': {
+                    transform: 'translate(14px, -9px) scale(0.75)',
+                    backgroundColor: '#fff',
+                    paddingX: '4px',
+                  },
+                },
+              }}
+            >
+              {brazilianStates.map((state) => (
+                <MenuItem key={state.value} value={state.value}>
+                  {state.label}
+                </MenuItem>
+              ))}
+            </Select>
+            {errors.state && (
+              <Typography variant="caption" color="error" sx={{ mt: 1 }}>
+                {errors.state}
+              </Typography>
+            )}
+          </FormControl>
         </Box>
         <Box sx={{ flex: 1 }}>
           <TextField

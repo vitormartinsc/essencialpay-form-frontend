@@ -2,18 +2,19 @@ export interface FormData {
   // Informações de contato - OBRIGATÓRIAS
   fullName: string; // Obrigatório
   phone: string; // Obrigatório
-  // TODO: Reativar quando necessário - informações pessoais básicas
+  // Informações pessoais básicas
+  accountCategory: string; // Pessoa Física ou Pessoa Jurídica
   cpf: string;
   cnpj?: string;
   email: string;
-  // TODO: Reativar quando necessário - informações de endereço
-  cep: string;
   state: string;
+  // Endereço
+  cep: string;
   city: string;
   neighborhood: string;
   street: string;
   number: string;
-  complement?: string;
+  complement: string;
   // Dados bancários - ATIVOS
   bankName: string;
   accountType: string;
@@ -31,13 +32,14 @@ export interface FormErrors {
   // Informações de contato - OBRIGATÓRIAS
   fullName?: string;
   phone?: string;
-  // TODO: Reativar quando necessário - informações pessoais básicas
+  // Informações pessoais básicas
+  accountCategory?: string;
   cpf?: string;
   cnpj?: string;
   email?: string;
-  // TODO: Reativar quando necessário - informações de endereço
-  cep?: string;
   state?: string;
+  // Endereço
+  cep?: string;
   city?: string;
   neighborhood?: string;
   street?: string;

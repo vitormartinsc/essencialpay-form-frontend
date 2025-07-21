@@ -117,11 +117,35 @@ const BankingStep: React.FC<BankingStepProps> = ({
         )}
         sx={{
           '& .MuiAutocomplete-inputRoot': {
-            borderRadius: '15px',
+            borderRadius: '8px',
+            '& .MuiOutlinedInput-notchedOutline': {
+              display: 'none !important',
+            },
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              display: 'none !important',
+            },
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+              display: 'none !important',
+            },
           },
           '& .MuiOutlinedInput-root': {
-            borderRadius: '15px',
-          }
+            borderRadius: '8px',
+            backgroundColor: '#fff',
+            border: '1px solid #ccc',
+            '&:hover': {
+              borderColor: '#0033ff',
+            },
+            '&.Mui-focused': {
+              border: '1px solid #0033ff',
+              boxShadow: '0 0 6px rgba(0, 51, 255, 0.5)',
+            },
+          },
+          '& .MuiAutocomplete-popupIndicator': {
+            color: '#0033ff',
+          },
+          '& .MuiAutocomplete-clearIndicator': {
+            color: '#0033ff',
+          },
         }}
       />
 

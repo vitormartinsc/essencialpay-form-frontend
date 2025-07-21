@@ -12,15 +12,12 @@ import {
   formatCpf,
   formatCnpj,
   formatPhone,
-  formatCep,
   formatAgency,
   formatAccount,
-  // TODO: Reativar quando necessário - validações de informações pessoais
-  // validateCpf,
-  // validateCnpj,
-  // validateEmail,
-  validatePhone, // Reativado para validar celular
-  // validateCep,
+  validateCpf,
+  validateCnpj,
+  validateEmail,
+  validatePhone,
   validateAccount,
 } from '../utils/formatters';
 import { getErrorMessages, isValidImage } from '../utils/formHelpers';
@@ -29,11 +26,7 @@ import config from '../config/index';
 import './EssencialForm.css';
 
 // Importação dos componentes das etapas
-// TODO: Reativar quando necessário - informações pessoais básicas
-// import PersonalInfoStep from './FormSteps/PersonalInfoStep';
-// TODO: Reativar quando necessário - informações de endereço
-// import AddressStep from './FormSteps/AddressStep';
-import ContactStep from './FormSteps/ContactStep';
+import PersonalInfoStep from './FormSteps/PersonalInfoStep';
 import BankingStep from './FormSteps/BankingStep';
 import DocumentsStep from './FormSteps/DocumentsStep';
 import ConsentStep from './FormSteps/ConsentStep';
@@ -43,13 +36,14 @@ const UserForm: React.FC = () => {
     // Informações de contato - OBRIGATÓRIAS
     fullName: '',
     phone: '',
-    // TODO: Reativar quando necessário - informações pessoais básicas
+    // Informações pessoais básicas
+    accountCategory: '',
     cpf: '',
     cnpj: '',
     email: '',
-    // TODO: Reativar quando necessário - informações de endereço
-    cep: '',
     state: '',
+    // Endereço
+    cep: '',
     city: '',
     neighborhood: '',
     street: '',
@@ -71,8 +65,6 @@ const UserForm: React.FC = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  // TODO: Reativar quando necessário - usado para busca de CEP
-  // const [searchingCep, setSearchingCep] = useState(false);
   const [showValidationAlert, setShowValidationAlert] = useState(false);
   const [consentAccepted, setConsentAccepted] = useState(false);
 
@@ -101,9 +93,6 @@ const UserForm: React.FC = () => {
         break;
       case 'phone':
         formattedValue = formatPhone(value);
-        break;
-      case 'cep':
-        formattedValue = formatCep(value);
         break;
       case 'agency':
         formattedValue = formatAgency(value);
@@ -209,54 +198,6 @@ const UserForm: React.FC = () => {
     }
   };
 
-  // Função para buscar dados do CEP - DESATIVADA TEMPORARIAMENTE
-  /*
-  const handleCepBlur = async () => {
-    const cleanCep = formData.cep.replace(/\D/g, '');
-    
-    if (cleanCep.length === 8) {
-      setSearchingCep(true);
-      try {
-        const response = await fetch(`${config.apiUrl}/api/cep/${cleanCep}`);
-        const data = await response.json();
-        
-        if (data.success) {
-          setFormData(prev => ({
-            ...prev,
-            state: data.data.uf || '',
-            city: data.data.localidade || '',
-            neighborhood: data.data.bairro || '',
-            street: data.data.logradouro || '',
-          }));
-          
-          // Limpar erros relacionados ao endereço
-          setErrors(prev => ({
-            ...prev,
-            cep: undefined,
-            state: undefined,
-            city: undefined,
-            neighborhood: undefined,
-            street: undefined,
-          }));
-        } else {
-          setErrors(prev => ({
-            ...prev,
-            cep: 'CEP não encontrado',
-          }));
-        }
-      } catch (error) {
-        console.error('Erro ao buscar CEP:', error);
-        setErrors(prev => ({
-          ...prev,
-          cep: 'Erro ao buscar CEP',
-        }));
-      } finally {
-        setSearchingCep(false);
-      }
-    }
-  };
-  */
-
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
 
@@ -272,17 +213,24 @@ const UserForm: React.FC = () => {
       newErrors.fullName = 'Nome completo é obrigatório';
     }
 
-    // TODO: Reativar quando necessário - validações de informações pessoais
-    /*
-    if (!formData.cpf) {
-      newErrors.cpf = 'CPF é obrigatório';
-    } else if (!validateCpf(formData.cpf)) {
-      newErrors.cpf = 'CPF inválido';
+    // Validação do tipo de conta - OBRIGATÓRIO
+    if (!formData.accountCategory) {
+      newErrors.accountCategory = 'Selecione o tipo de conta';
     }
 
-    // CNPJ é opcional, mas se preenchido deve ser válido
-    if (formData.cnpj && !validateCnpj(formData.cnpj)) {
-      newErrors.cnpj = 'CNPJ inválido';
+    // Validação CPF/CNPJ baseada no tipo de conta selecionado
+    if (formData.accountCategory === 'pessoa_fisica') {
+      if (!formData.cpf) {
+        newErrors.cpf = 'CPF é obrigatório';
+      } else if (!validateCpf(formData.cpf)) {
+        newErrors.cpf = 'CPF inválido';
+      }
+    } else if (formData.accountCategory === 'pessoa_juridica') {
+      if (!formData.cnpj) {
+        newErrors.cnpj = 'CNPJ é obrigatório';
+      } else if (!validateCnpj(formData.cnpj)) {
+        newErrors.cnpj = 'CNPJ inválido';
+      }
     }
 
     if (!formData.email) {
@@ -290,36 +238,10 @@ const UserForm: React.FC = () => {
     } else if (!validateEmail(formData.email)) {
       newErrors.email = 'Email inválido';
     }
-    */
-
-    // TODO: Reativar quando necessário - validações de endereço
-    /*
-    if (!formData.cep) {
-      newErrors.cep = 'CEP é obrigatório';
-    } else if (!validateCep(formData.cep)) {
-      newErrors.cep = 'CEP inválido';
-    }
 
     if (!formData.state.trim()) {
       newErrors.state = 'Estado é obrigatório';
     }
-
-    if (!formData.city.trim()) {
-      newErrors.city = 'Cidade é obrigatória';
-    }
-
-    if (!formData.neighborhood.trim()) {
-      newErrors.neighborhood = 'Bairro é obrigatório';
-    }
-
-    if (!formData.street.trim()) {
-      newErrors.street = 'Rua é obrigatória';
-    }
-
-    if (!formData.number.trim()) {
-      newErrors.number = 'Número é obrigatório';
-    }
-    */
 
     // Validação dos dados bancários - ATIVO
     if (!formData.bankName.trim()) {
@@ -397,19 +319,12 @@ const UserForm: React.FC = () => {
       // Nome completo - OBRIGATÓRIO
       formDataToSend.append('fullName', formData.fullName);
       
-      // TODO: Reativar quando necessário - informações pessoais básicas
-      // formDataToSend.append('cpf', formData.cpf);
-      // formDataToSend.append('cnpj', formData.cnpj || '');
-      // formDataToSend.append('email', formData.email);
-      
-      // TODO: Reativar quando necessário - informações de endereço
-      // formDataToSend.append('cep', formData.cep);
-      // formDataToSend.append('state', formData.state);
-      // formDataToSend.append('city', formData.city);
-      // formDataToSend.append('neighborhood', formData.neighborhood);
-      // formDataToSend.append('street', formData.street);
-      // formDataToSend.append('number', formData.number);
-      // formDataToSend.append('complement', formData.complement || '');
+      // Informações pessoais básicas - ATIVO
+      formDataToSend.append('accountCategory', formData.accountCategory);
+      formDataToSend.append('cpf', formData.cpf);
+      formDataToSend.append('cnpj', formData.cnpj || '');
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('state', formData.state);
       
       // Dados bancários - ATIVOS
       formDataToSend.append('bankName', formData.bankName);
@@ -712,7 +627,7 @@ const UserForm: React.FC = () => {
       </Alert>
 
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
-        {/* Informações de Contato - ATIVO */}
+        {/* Informações Pessoais */}
         <Box sx={{ 
           mb: 4,
           p: 3,
@@ -731,14 +646,17 @@ const UserForm: React.FC = () => {
             borderRadius: '0 0 2px 2px',
           }
         }}>
-          <ContactStep
+          <PersonalInfoStep
             formData={formData}
             errors={errors}
             onFieldChange={handleChange}
+            onSelectChange={handleSelectChange}
             fieldStyles={fieldStyles}
             labelProps={labelProps}
           />
         </Box>
+
+
 
         {/* Dados Bancários - ATIVO */}
         <Box sx={{ 
