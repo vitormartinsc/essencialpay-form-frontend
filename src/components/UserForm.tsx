@@ -21,6 +21,7 @@ import {
   validateAccount,
 } from '../utils/formatters';
 import { getErrorMessages, isValidImage } from '../utils/formHelpers';
+import { compressImage } from '../utils/imageUtils';
 import { fieldStyles, selectFieldStyles, labelProps } from '../styles/formStyles';
 import config from '../config/index';
 import './EssencialForm.css';
@@ -145,7 +146,7 @@ const UserForm: React.FC = () => {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
     if (files && files[0]) {
       const file = files[0];
@@ -155,6 +156,25 @@ const UserForm: React.FC = () => {
         if (!isValidImage(file)) {
           alert('Por favor, selecione uma imagem válida (PNG, JPG, JPEG, WEBP).');
           return;
+        }
+        
+        try {
+          setLoading(true);
+          
+          // Comprimir a imagem para evitar erro de tamanho no servidor
+          const compressedFile = await compressImage(file, 3);
+          
+          setFormData(prev => ({
+            ...prev,
+            [name]: compressedFile,
+          }));
+          
+        } catch (error) {
+          console.error('Erro ao comprimir imagem:', error);
+          alert('Erro ao processar a imagem. Por favor, tente novamente.');
+          return;
+        } finally {
+          setLoading(false);
         }
       } else {
         // Para comprovante de residência, aceita PDF também
@@ -166,22 +186,39 @@ const UserForm: React.FC = () => {
           }));
           return;
         }
-      }
+        
+        // Validar tamanho do arquivo (máximo 5MB)
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        if (file.size > maxSize) {
+          // Se for uma imagem, tentar comprimir
+          if (file.type.startsWith('image/')) {
+            try {
+              setLoading(true);
+              const compressedFile = await compressImage(file, 3);
+              setFormData(prev => ({
+                ...prev,
+                [name]: compressedFile,
+              }));
+              setLoading(false);
+              return;
+            } catch (error) {
+              console.error('Erro ao comprimir imagem:', error);
+              setLoading(false);
+            }
+          }
+          
+          setErrors(prev => ({
+            ...prev,
+            [name]: 'Arquivo muito grande. Máximo 5MB.',
+          }));
+          return;
+        }
 
-      // Validar tamanho do arquivo (máximo 5MB)
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      if (file.size > maxSize) {
-        setErrors(prev => ({
+        setFormData(prev => ({
           ...prev,
-          [name]: 'Arquivo muito grande. Máximo 5MB.',
+          [name]: file,
         }));
-        return;
       }
-
-      setFormData(prev => ({
-        ...prev,
-        [name]: file,
-      }));
 
       // Clear error when user selects a valid file
       if (errors[name as keyof FormErrors]) {
