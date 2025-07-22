@@ -1,6 +1,6 @@
 const config = {
   development: {
-    apiUrl: 'http://localhost:8080',
+    apiUrl: import.meta.env.VITE_API_URL || 'https://essencialpay-form-backend-production.up.railway.app',
   },
   production: {
     apiUrl: import.meta.env.VITE_API_URL || 'https://essencialpay-form-backend-production.up.railway.app',

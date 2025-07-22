@@ -6,6 +6,7 @@ import Footer from './components/Footer'
 import WhatsAppFloatButton from './components/WhatsAppFloatButton'
 import TermsOfUse from './components/TermsOfUse'
 import PrivacyPolicy from './components/PrivacyPolicy'
+import { MobileDebug } from './components/MobileDebug'
 import './App.css'
 
 const theme = createTheme({
@@ -83,6 +84,7 @@ function App() {
           </div>
           <Footer />
           <WhatsAppFloatButton />
+          <MobileDebug />
         </div>
       </Router>
     </ThemeProvider>

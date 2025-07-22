@@ -16,6 +16,7 @@ interface DocumentsStepProps {
   onDocumentTypeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+  loading?: boolean;
 }
 
 const DocumentsStep: React.FC<DocumentsStepProps> = ({
@@ -23,7 +24,8 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
   errors,
   onDocumentTypeChange,
   onFileChange,
-  setFormData
+  setFormData,
+  loading = false
 }) => {
   return (
     <>
@@ -373,13 +375,14 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
                 } 
               }}
             >
-              Tirar Selfie
+              {loading ? 'Processando...' : 'Tirar Selfie'}
               <input 
                 type="file" 
                 accept="image/png, image/jpeg, image/jpg, image/webp" 
                 name="selfie" 
                 onChange={onFileChange}
                 capture="user"
+                disabled={loading}
                 style={{ 
                   display: 'none',
                   opacity: 0,

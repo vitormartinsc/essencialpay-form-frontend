@@ -21,6 +21,7 @@ import {
   validateAccount,
 } from '../utils/formatters';
 import { getErrorMessages, isValidImage } from '../utils/formHelpers';
+import { compressImage, fileToBase64 } from '../utils/imageUtils';
 import { fieldStyles, selectFieldStyles, labelProps } from '../styles/formStyles';
 import config from '../config/index';
 import './EssencialForm.css';
@@ -32,28 +33,60 @@ import DocumentsStep from './FormSteps/DocumentsStep';
 import ConsentStep from './FormSteps/ConsentStep';
 
 const UserForm: React.FC = () => {
+  // Gerar CPF válido aleatório para teste
+  const generateValidCPF = (): string => {
+    // Função para gerar CPF válido
+    const generateCPF = () => {
+      // Gerar os 9 primeiros dígitos
+      const digits = [];
+      for (let i = 0; i < 9; i++) {
+        digits.push(Math.floor(Math.random() * 10));
+      }
+      
+      // Calcular primeiro dígito verificador
+      let sum1 = 0;
+      for (let i = 0; i < 9; i++) {
+        sum1 += digits[i] * (10 - i);
+      }
+      const digit1 = sum1 % 11 < 2 ? 0 : 11 - (sum1 % 11);
+      digits.push(digit1);
+      
+      // Calcular segundo dígito verificador
+      let sum2 = 0;
+      for (let i = 0; i < 10; i++) {
+        sum2 += digits[i] * (11 - i);
+      }
+      const digit2 = sum2 % 11 < 2 ? 0 : 11 - (sum2 % 11);
+      digits.push(digit2);
+      
+      return digits.join('');
+    };
+    
+    return formatCpf(generateCPF());
+  };
+
   const [formData, setFormData] = useState<FormData>({
-    // Informações de contato - OBRIGATÓRIAS
-    fullName: '',
-    phone: '',
-    // Informações pessoais básicas
-    accountCategory: '',
-    cpf: '',
+    // Informações de contato - OBRIGATÓRIAS - PRÉ-PREENCHIDAS PARA TESTE
+    fullName: 'João Silva Santos',
+    phone: '(11) 99999-9999',
+    // Informações pessoais básicas - PRÉ-PREENCHIDAS PARA TESTE
+    accountCategory: 'pessoa_fisica',
+    cpf: generateValidCPF(),
     cnpj: '',
-    email: '',
-    state: '',
-    // Endereço
-    cep: '',
-    city: '',
-    neighborhood: '',
-    street: '',
-    number: '',
-    complement: '',
-    // Dados bancários - ATIVOS
-    bankName: '',
-    accountType: '',
-    agency: '',
-    account: '',
+    email: 'joao.silva@email.com',
+    state: 'São Paulo',
+    // Endereço - PRÉ-PREENCHIDAS PARA TESTE
+    cep: '01234-567',
+    city: 'São Paulo',
+    neighborhood: 'Centro',
+    street: 'Rua das Flores',
+    number: '123',
+    complement: 'Apto 45',
+    // Dados bancários - ATIVOS - PRÉ-PREENCHIDOS PARA TESTE
+    bankName: 'Banco do Brasil',
+    accountType: 'corrente',
+    agency: '1234',
+    account: '567890-1',
     // Documentos - ATIVOS
     documentType: 'RG',
     documentFront: null,
@@ -67,6 +100,7 @@ const UserForm: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
   const [showValidationAlert, setShowValidationAlert] = useState(false);
   const [consentAccepted, setConsentAccepted] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState('');
 
   const handleDocumentTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newDocumentType = event.target.value;
@@ -145,43 +179,141 @@ const UserForm: React.FC = () => {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
     if (files && files[0]) {
       const file = files[0];
       
+      console.log(`📁 File selected - Name: ${name}, Size: ${(file.size / 1024 / 1024).toFixed(2)}MB, Type: ${file.type}`);
+      console.log(`📁 File details:`, {
+        name: file.name,
+        lastModified: file.lastModified,
+        size: file.size,
+        type: file.type
+      });
+      
       // Para documentos, só aceita imagens
       if (name === 'documentFront' || name === 'documentBack' || name === 'selfie') {
         if (!isValidImage(file)) {
+          console.error('❌ Invalid image type:', file.type);
           alert('Por favor, selecione uma imagem válida (PNG, JPG, JPEG, WEBP).');
           return;
+        }
+        
+        try {
+          console.log('🔄 Starting image compression...');
+          setLoading(true);
+          
+          // Comprimir a imagem com limite menor para evitar erro do backend
+          const compressedFile = await compressImage(file, 3); // Máximo 3MB
+          console.log(`✅ Image compressed successfully - New size: ${(compressedFile.size / 1024 / 1024).toFixed(2)}MB`);
+          
+          // Criar um novo arquivo com nome adequado se necessário
+          let finalFile = compressedFile;
+          
+          // Para selfies ou arquivos sem nome adequado, criar um nome descritivo
+          if (name === 'selfie' && (!compressedFile.name || compressedFile.name === 'blob' || compressedFile.name === 'image.jpg')) {
+            const timestamp = new Date().getTime();
+            const fileExtension = compressedFile.type.split('/')[1] || 'jpg';
+            finalFile = new File([compressedFile], `selfie_${timestamp}.${fileExtension}`, {
+              type: compressedFile.type,
+              lastModified: Date.now(),
+            });
+            console.log('📝 Renamed selfie file to:', finalFile.name);
+          }
+          
+          // Para documentos sem nome adequado
+          if ((name === 'documentFront' || name === 'documentBack') && (!compressedFile.name || compressedFile.name === 'blob' || compressedFile.name === 'image.jpg')) {
+            const timestamp = new Date().getTime();
+            const fileExtension = compressedFile.type.split('/')[1] || 'jpg';
+            const docType = name === 'documentFront' ? 'frente' : 'verso';
+            finalFile = new File([compressedFile], `documento_${docType}_${timestamp}.${fileExtension}`, {
+              type: compressedFile.type,
+              lastModified: Date.now(),
+            });
+            console.log(`📝 Renamed ${name} file to:`, finalFile.name);
+          }
+          
+          console.log('📎 Final file details:', {
+            name: finalFile.name,
+            size: finalFile.size,
+            type: finalFile.type,
+            lastModified: finalFile.lastModified
+          });
+          
+          setFormData(prev => ({
+            ...prev,
+            [name]: finalFile,
+          }));
+          
+        } catch (error) {
+          console.error('❌ Error compressing image:', error);
+          alert('Erro ao processar a imagem. Por favor, tente novamente.');
+          return;
+        } finally {
+          setLoading(false);
         }
       } else {
         // Para comprovante de residência, aceita PDF também
         const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp', 'application/pdf'];
         if (!allowedTypes.includes(file.type)) {
+          console.error('❌ Invalid file type for residence proof:', file.type);
           setErrors(prev => ({
             ...prev,
             [name]: 'Apenas arquivos PNG, JPG, JPEG, WEBP ou PDF são permitidos',
           }));
           return;
         }
-      }
-
-      // Validar tamanho do arquivo (máximo 5MB)
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      if (file.size > maxSize) {
-        setErrors(prev => ({
+        
+        // Validar tamanho do arquivo (máximo 5MB para evitar erro do backend)
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        if (file.size > maxSize) {
+          console.error('❌ File too large:', (file.size / 1024 / 1024).toFixed(2), 'MB');
+          
+          // Se for uma imagem, tentar comprimir
+          if (file.type.startsWith('image/')) {
+            try {
+              console.log('🔄 Compressing residence proof image...');
+              setLoading(true);
+              const compressedFile = await compressImage(file, 3);
+              console.log(`✅ Residence proof compressed - New size: ${(compressedFile.size / 1024 / 1024).toFixed(2)}MB`);
+              
+              setFormData(prev => ({
+                ...prev,
+                [name]: compressedFile,
+              }));
+              setLoading(false);
+              return;
+            } catch (error) {
+              console.error('❌ Error compressing residence proof:', error);
+              setLoading(false);
+            }
+          }
+          
+          setErrors(prev => ({
+            ...prev,
+            [name]: 'Arquivo muito grande. Máximo 5MB.',
+          }));
+          return;
+        }
+        
+        // Criar nome adequado para comprovante de residência se necessário
+        let finalFile = file;
+        if (!file.name || file.name === 'blob' || file.name === 'document.pdf') {
+          const timestamp = new Date().getTime();
+          const fileExtension = file.type === 'application/pdf' ? 'pdf' : file.type.split('/')[1] || 'jpg';
+          finalFile = new File([file], `comprovante_residencia_${timestamp}.${fileExtension}`, {
+            type: file.type,
+            lastModified: Date.now(),
+          });
+          console.log('📝 Renamed residence proof file to:', finalFile.name);
+        }
+        
+        setFormData(prev => ({
           ...prev,
-          [name]: 'Arquivo muito grande. Máximo 5MB.',
+          [name]: finalFile,
         }));
-        return;
       }
-
-      setFormData(prev => ({
-        ...prev,
-        [name]: file,
-      }));
 
       // Clear error when user selects a valid file
       if (errors[name as keyof FormErrors]) {
@@ -291,6 +423,19 @@ const UserForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    console.log('📋 Form submission started');
+    console.log('📊 Form data overview:', {
+      hasFullName: !!formData.fullName,
+      hasPhone: !!formData.phone,
+      hasEmail: !!formData.email,
+      hasCpf: !!formData.cpf,
+      hasDocumentFront: !!formData.documentFront,
+      hasDocumentBack: !!formData.documentBack,
+      hasSelfie: !!formData.selfie,
+      hasResidenceProof: !!formData.residenceProof,
+      documentType: formData.documentType
+    });
+    
     const validationErrors = validateForm();
     
     // Verificar se o consentimento foi aceito
@@ -299,6 +444,7 @@ const UserForm: React.FC = () => {
     }
     
     if (Object.keys(validationErrors).length > 0) {
+      console.error('❌ Validation errors found:', validationErrors);
       setErrors(validationErrors);
       setShowValidationAlert(true);
       // Scroll to top to show the error alert
@@ -306,11 +452,23 @@ const UserForm: React.FC = () => {
       return;
     }
 
+    console.log('✅ Validation passed, proceeding with submission');
     setShowValidationAlert(false);
     setLoading(true);
+    setUploadProgress('Preparando envio...');
+    
     try {
+      // Verificar conectividade antes de enviar
+      console.log('🌐 Checking network connectivity...');
+      console.log('🌐 Navigator online:', navigator.onLine);
+      console.log('🌐 Connection type:', (navigator as any).connection?.effectiveType || 'unknown');
+      
+      setUploadProgress('Organizando dados...');
+      
       // Criar FormData para enviar arquivos junto com os dados
       const formDataToSend = new FormData();
+      
+      console.log('📦 Building FormData...');
       
       // Adicionar todos os campos de texto
       // Celular - OBRIGATÓRIO
@@ -335,38 +493,159 @@ const UserForm: React.FC = () => {
       // Documentos - ATIVOS
       formDataToSend.append('documentType', formData.documentType);
       
+      // Calcular tamanho total dos arquivos
+      let totalFileSize = 0;
+      
       // Adicionar arquivos se existirem
       if (formData.documentFront) {
-        formDataToSend.append('documentFront', formData.documentFront);
+        // Garantir que o arquivo tem um nome adequado
+        const file = formData.documentFront;
+        const fileName = file.name || `documento_frente_${Date.now()}.jpg`;
+        const finalFile = new File([file], fileName, { type: file.type });
+        
+        formDataToSend.append('documentFront', finalFile, fileName);
+        totalFileSize += finalFile.size;
+        console.log('📎 Document front added:', fileName, `(${(finalFile.size / 1024 / 1024).toFixed(2)}MB)`);
       }
       if (formData.documentBack) {
-        formDataToSend.append('documentBack', formData.documentBack);
+        // Garantir que o arquivo tem um nome adequado
+        const file = formData.documentBack;
+        const fileName = file.name || `documento_verso_${Date.now()}.jpg`;
+        const finalFile = new File([file], fileName, { type: file.type });
+        
+        formDataToSend.append('documentBack', finalFile, fileName);
+        totalFileSize += finalFile.size;
+        console.log('📎 Document back added:', fileName, `(${(finalFile.size / 1024 / 1024).toFixed(2)}MB)`);
       }
       if (formData.residenceProof) {
-        formDataToSend.append('residenceProof', formData.residenceProof);
+        // Garantir que o arquivo tem um nome adequado
+        const file = formData.residenceProof;
+        const extension = file.type === 'application/pdf' ? 'pdf' : 'jpg';
+        const fileName = file.name || `comprovante_residencia_${Date.now()}.${extension}`;
+        const finalFile = new File([file], fileName, { type: file.type });
+        
+        formDataToSend.append('residenceProof', finalFile, fileName);
+        totalFileSize += finalFile.size;
+        console.log('📎 Residence proof added:', fileName, `(${(finalFile.size / 1024 / 1024).toFixed(2)}MB)`);
       }
       if (formData.selfie) {
-        formDataToSend.append('selfie', formData.selfie);
+        // Garantir que o arquivo tem um nome adequado - CRÍTICO PARA SELFIES DO CELULAR
+        const file = formData.selfie;
+        const fileName = file.name || `selfie_${Date.now()}.jpg`;
+        const finalFile = new File([file], fileName, { 
+          type: file.type || 'image/jpeg',
+          lastModified: Date.now()
+        });
+        
+        formDataToSend.append('selfie', finalFile, fileName);
+        totalFileSize += finalFile.size;
+        console.log('📎 Selfie added:', fileName, `(${(finalFile.size / 1024 / 1024).toFixed(2)}MB)`);
+        console.log('📎 Selfie metadata:', {
+          name: finalFile.name,
+          type: finalFile.type,
+          size: finalFile.size,
+          lastModified: finalFile.lastModified
+        });
       }
       
-      // Enviar dados para o backend
-      const response = await fetch(`${config.apiUrl}/api/users`, {
-        method: 'POST',
-        body: formDataToSend, // FormData não precisa do Content-Type header
-      });
-
-      if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
+      console.log('� Total payload size:', (totalFileSize / 1024 / 1024).toFixed(2), 'MB');
+      console.log('�🚀 Sending request to backend...');
+      console.log('🔗 API URL:', `${config.apiUrl}/api/users`);
+      
+      // Configurar timeout e retry para mobile
+      // Debug: Listar todos os dados que serão enviados
+      console.log('📋 FormData contents:');
+      for (const [key, value] of formDataToSend.entries()) {
+        if (value instanceof File) {
+          console.log(`  ${key}: File(${value.name}, ${(value.size / 1024).toFixed(1)}KB, ${value.type})`);
+        } else {
+          console.log(`  ${key}: ${value}`);
+        }
       }
+      
+      setUploadProgress('Conectando com servidor...');
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 segundos timeout
+      
+      try {
+        // Enviar dados para o backend
+        const response = await fetch(`${config.apiUrl}/api/users`, {
+          method: 'POST',
+          body: formDataToSend,
+          signal: controller.signal,
+          // Headers específicos para melhorar compatibilidade mobile
+          headers: {
+            'Accept': 'application/json',
+          },
+        });
 
-      const result = await response.json();
-      console.log('Usuário e documentos criados:', result);
-      setSubmitted(true);
+        clearTimeout(timeoutId);
+        setUploadProgress('Processando resposta...');
+        console.log('📡 Response received - Status:', response.status);
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('❌ HTTP Error:', response.status, errorText);
+          
+          // Log mais detalhado para diferentes tipos de erro
+          if (response.status === 500) {
+            console.error('❌ Server Error 500 - Backend internal error');
+            console.error('❌ This usually means there is an issue processing the files or data on the server');
+            
+            // Verificar se é erro de tamanho de arquivo
+            if (errorText.includes('File too large') || errorText.includes('MulterError')) {
+              throw new Error('Erro: Um ou mais arquivos são muito grandes para o servidor. Tente reduzir o tamanho das imagens.');
+            }
+          } else if (response.status === 413) {
+            console.error('❌ Payload Too Large - Files too big');
+            throw new Error('Erro: Arquivos muito grandes. Reduza o tamanho das imagens e tente novamente.');
+          } else if (response.status === 400) {
+            console.error('❌ Bad Request - Invalid data format');
+          }
+          
+          throw new Error(`Erro HTTP: ${response.status} - ${errorText}`);
+        }
+
+        const result = await response.json();
+        console.log('✅ Success! User and documents created:', result);
+        setUploadProgress('Concluído com sucesso!');
+        setSubmitted(true);
+        
+      } catch (fetchError) {
+        clearTimeout(timeoutId);
+        
+        if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+          console.error('⏰ Request timeout after 60 seconds');
+          setUploadProgress('Tempo esgotado - tente novamente');
+          throw new Error('Timeout: A requisição demorou muito para ser processada. Verifique sua conexão e tente novamente.');
+        }
+        
+        throw fetchError;
+      }
+      
     } catch (error) {
-      console.error('Erro ao enviar formulário:', error);
-      // Você pode adicionar um estado de erro aqui se quiser mostrar uma mensagem ao usuário
+      console.error('❌ Error submitting form:', error);
+      console.error('❌ Error details:', {
+        name: error instanceof Error ? error.name : 'unknown',
+        message: error instanceof Error ? error.message : 'unknown',
+        stack: error instanceof Error ? error.stack : 'unknown'
+      });
+      
+      let errorMessage = 'Erro desconhecido';
+      
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        errorMessage = 'Erro de conexão. Verifique sua internet e tente novamente.';
+      } else if (error instanceof Error && error.name === 'AbortError') {
+        errorMessage = 'Timeout: A requisição demorou muito. Tente novamente.';
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
+      setUploadProgress('Erro no envio');
+      alert(`Erro ao enviar formulário: ${errorMessage}`);
     } finally {
       setLoading(false);
+      setUploadProgress('');
     }
   };
 
@@ -586,10 +865,10 @@ const UserForm: React.FC = () => {
           </Typography>
           <Box component="ul" sx={{ pl: 0, m: 0 }}>
             {getErrorMessages(errors).map((message, index) => (
-              <Typography key={index} variant="body2" sx={{ mb: 0.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box key={index} sx={{ mb: 0.5, display: 'flex', alignItems: 'center', gap: 1, fontSize: '0.875rem' }}>
                 <Box sx={{ width: '4px', height: '4px', backgroundColor: '#C62828', borderRadius: '50%' }} />
                 {message}
-              </Typography>
+              </Box>
             ))}
           </Box>
         </Alert>
@@ -713,6 +992,7 @@ const UserForm: React.FC = () => {
             onDocumentTypeChange={handleDocumentTypeChange}
             onFileChange={handleFileChange}
             setFormData={setFormData}
+            loading={loading}
           />
         </Box>
 
@@ -735,7 +1015,7 @@ const UserForm: React.FC = () => {
               },
             }}
           >
-            <Typography variant="body2" sx={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1, fontSize: '0.875rem' }}>
               <Box sx={{ 
                 width: '20px', 
                 height: '20px', 
@@ -751,7 +1031,7 @@ const UserForm: React.FC = () => {
                 !
               </Box>
               Revise os campos destacados antes de enviar
-            </Typography>
+            </Box>
           </Alert>
         )}
 
@@ -839,7 +1119,7 @@ const UserForm: React.FC = () => {
           {loading ? (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <CircularProgress size={20} sx={{ color: '#fff' }} />
-              <Typography>Enviando...</Typography>
+              <Typography>{uploadProgress || 'Enviando...'}</Typography>
             </Box>
           ) : (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -857,8 +1137,7 @@ const UserForm: React.FC = () => {
           borderRadius: '12px',
           border: '1px solid rgba(0, 86, 255, 0.1)',
         }}>
-          <Typography 
-            variant="body2" 
+          <Box 
             sx={{ 
               color: '#666', 
               fontSize: '0.9rem',
@@ -886,7 +1165,7 @@ const UserForm: React.FC = () => {
               ✓
             </Box>
             <span>Receba sua maquininha em casa com segurança e rapidez</span>
-          </Typography>
+          </Box>
         </Box>
       </Box>
     </Paper>
