@@ -4,9 +4,9 @@
 .App {
   text-align: center;
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
   background-color: transparent !important;
-  padding: 10px;
+  padding: 20px 8px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin: 0 auto;
@@ -51,7 +51,7 @@ form {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 400px;
+  max-width: 600px;
   margin: 0 auto;
   box-sizing: border-box;
 }
@@ -63,7 +63,7 @@ input[type="password"],
 input[type="email"],
 input[type="tel"] {
   width: 100%;
-  max-width: 400px;
+  max-width: 600px;
   margin-left: 0;
   margin-right: 0;
   display: block;
@@ -119,8 +119,8 @@ form input:focus {
   input[type="tel"],
   input[type="date"] {
     min-height: 44px;
-    font-size: 1.1rem;
-    padding: 12px 10px;
+    font-size: 0.9rem;
+    padding: 10px 8px;
     width: 100%;
     box-sizing: border-box;
   }
@@ -133,13 +133,23 @@ form input:focus {
   }
 
   .MuiContainer-root {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
   }
 
   .MuiGrid-item {
-    padding-left: 8px !important;
-    padding-right: 8px !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+  
+  /* Reduzir tamanho dos labels */
+  .MuiInputLabel-root {
+    font-size: 0.85rem !important;
+  }
+  
+  /* Ajustar densidade dos componentes */
+  .MuiFormControl-root {
+    margin-bottom: 12px !important;
   }
 }
 

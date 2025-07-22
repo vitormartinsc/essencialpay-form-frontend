@@ -412,7 +412,7 @@ const UserForm: React.FC = () => {
       <Paper
         elevation={0}
         sx={{ 
-          maxWidth: '500px',
+          maxWidth: '600px',
           margin: '0 auto',
           backgroundColor: '#ffffff', 
           borderRadius: '20px', 
@@ -432,8 +432,9 @@ const UserForm: React.FC = () => {
             borderRadius: '20px 20px 0 0',
           },
           '@media (max-width:600px)': {
-            margin: '0 16px',
-            padding: '40px 24px',
+            margin: '0 4px',
+            padding: '32px 16px',
+            maxWidth: 'calc(100vw - 8px)',
           },
         }}
       >
@@ -528,11 +529,11 @@ const UserForm: React.FC = () => {
       sx={{
         backgroundColor: '#FFFFFF',
         color: '#0033ff',
-        padding: '40px 32px',
+        padding: '40px 48px',
         borderRadius: '20px',
         boxShadow: '0 12px 32px rgba(0, 51, 255, 0.08), 0 2px 16px rgba(0, 51, 255, 0.04)',
         width: '100%',
-        maxWidth: '500px',
+        maxWidth: '600px',
         margin: '0 auto',
         boxSizing: 'border-box',
         position: 'relative',
@@ -548,9 +549,10 @@ const UserForm: React.FC = () => {
           borderRadius: '20px 20px 0 0',
         },
         '@media (max-width:600px)': {
-          margin: '0 16px',
-          padding: '32px 24px',
-          borderRadius: '16px',
+          margin: '0 4px',
+          padding: '20px 16px',
+          borderRadius: '12px',
+          maxWidth: 'calc(100vw - 8px)',
         },
       }}
     >
@@ -573,7 +575,7 @@ const UserForm: React.FC = () => {
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
             '@media (max-width:600px)': {
-              fontSize: '1.8rem',
+              fontSize: '1.4rem',
             },
           }}
         >
@@ -586,6 +588,10 @@ const UserForm: React.FC = () => {
             fontSize: '1rem',
             fontWeight: 400,
             mb: 2,
+            '@media (max-width:600px)': {
+              fontSize: '0.8rem',
+              mb: 1.5,
+            },
           }}
         >
           Complete seu cadastro e receba sua maquininha de cartão em casa
@@ -645,25 +651,53 @@ const UserForm: React.FC = () => {
           borderRadius: '12px',
           padding: '16px 20px',
           boxShadow: '0 4px 12px rgba(0, 86, 255, 0.08)',
+          '@media (max-width:600px)': {
+            padding: '12px 16px',
+            mb: 2,
+            fontSize: '0.85rem',
+          },
           '& .MuiAlert-icon': {
             color: '#0056FF',
             fontSize: '1.5rem',
+            '@media (max-width:600px)': {
+              fontSize: '1.1rem',
+            },
           },
           '& .MuiAlert-message': {
             fontSize: '0.95rem',
             fontWeight: 500,
+            '@media (max-width:600px)': {
+              fontSize: '0.8rem',
+            },
           },
         }}
       >
-        <Typography variant="body1" sx={{ fontWeight: 600 }}>
+        <Typography variant="body1" sx={{ 
+          fontWeight: 600,
+          '@media (max-width:600px)': {
+            fontSize: '0.8rem',
+          },
+        }}>
           💳 Cadastro para Maquininha
         </Typography>
-        <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.9 }}>
+        <Typography variant="body2" sx={{ 
+          mt: 0.5, 
+          opacity: 0.9,
+          '@media (max-width:600px)': {
+            fontSize: '0.7rem',
+            mt: 0.25,
+          },
+        }}>
           Preencha seus dados para receber sua maquininha de cartão em casa
         </Typography>
       </Alert>
 
-      <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+      <Box component="form" onSubmit={handleSubmit} sx={{ 
+        mt: 3,
+        '@media (max-width:600px)': {
+          mt: 2,
+        },
+      }}>
         {/* Informações Pessoais */}
         <Box sx={{ 
           mb: 4,
@@ -869,7 +903,8 @@ const UserForm: React.FC = () => {
             },
             '@media (max-width:600px)': {
               minHeight: '48px',
-              fontSize: '15px',
+              fontSize: '14px',
+              mt: 3,
             },
           }}
         >

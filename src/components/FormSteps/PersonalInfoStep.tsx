@@ -32,7 +32,16 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
 
   return (
     <>
-      <Typography variant="h6" sx={{ color: '#0033ff', mb: 2, fontSize: '1.1rem', fontWeight: 600 }}>
+      <Typography variant="h6" sx={{ 
+        color: '#0033ff', 
+        mb: 2, 
+        fontSize: '1.1rem', 
+        fontWeight: 600,
+        '@media (max-width:600px)': {
+          fontSize: '1rem',
+          mb: 1.5,
+        },
+      }}>
         Informações Pessoais
       </Typography>
 

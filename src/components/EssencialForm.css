@@ -4,14 +4,14 @@
 .essencial-form {
   background-color: #FFFFFF !important;
   color: #0033ff !important;
-  padding: 32px 24px;
+  padding: 40px 48px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 450px;
+  max-width: 600px;
   margin: 0 auto;
   box-sizing: border-box;
 }
@@ -32,7 +32,7 @@
 .essencial-form input[type="tel"],
 .essencial-form .MuiInputBase-input {
   width: 100%;
-  max-width: 500px;
+  max-width: 600px;
   margin-left: 0;
   margin-right: 0;
   display: block;
@@ -127,9 +127,9 @@
 /* Responsividade */
 @media (max-width: 768px) {
   .essencial-form {
-    padding: 24px 16px;
-    max-width: 100%;
-    margin: 10px;
+    padding: 20px 16px;
+    max-width: calc(100vw - 8px);
+    margin: 0 4px;
   }
   
   .essencial-form .form-container {
@@ -139,6 +139,17 @@
 
   .essencial-form .form-container input {
     flex: 1 1 100%;
+  }
+  
+  /* Reduzir espaçamento entre seções em mobile */
+  .essencial-form .MuiBox-root {
+    margin-bottom: 16px !important;
+  }
+  
+  /* Otimizar títulos das seções */
+  .essencial-form .MuiTypography-h6 {
+    font-size: 1rem !important;
+    margin-bottom: 12px !important;
   }
 }
 

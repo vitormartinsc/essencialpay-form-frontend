@@ -2,14 +2,22 @@ export const fieldStyles = {
   mt: 1,
   mb: 1,
   width: '100%',
-  maxWidth: '500px',
+  maxWidth: '600px',
   '& .MuiInputBase-root': {
     height: '56px',
-    fontSize: '1rem',
+    fontSize: '17px',
     backgroundColor: '#fff',
-    color: '#0033ff',
-    border: '1px solid #ccc',
-    borderRadius: '8px',
+    borderRadius: '12px',
+    border: '1px solid #E0E0E0',
+    transition: 'all 0.3s ease',
+    '@media (max-width:600px)': {
+      height: '48px',
+      fontSize: '15px',
+    },
+    '&:hover': {
+      borderColor: '#0056FF',
+      backgroundColor: '#FAFBFF',
+    },
     '&:focus-within': {
       border: '1px solid #0033ff',
       boxShadow: '0 0 6px rgba(0, 51, 255, 0.5)',

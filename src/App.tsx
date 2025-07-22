@@ -61,9 +61,9 @@ function App() {
           </Box>
           <div style={{
             width: '100%',
-            maxWidth: '800px',
+            maxWidth: '900px',
             backgroundColor: 'transparent',
-            padding: '10px',
+            padding: '20px 8px',
             borderRadius: '8px',
             margin: '0 auto',
             position: 'relative',

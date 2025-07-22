@@ -93,7 +93,18 @@ const BankingStep: React.FC<BankingStepProps> = ({
 
   return (
     <>
-      <Typography variant="h6" sx={{ color: '#0033ff', mb: 2, mt: 3, fontSize: '1.1rem', fontWeight: 600 }}>
+      <Typography variant="h6" sx={{ 
+        color: '#0033ff', 
+        mb: 2, 
+        mt: 3, 
+        fontSize: '1.1rem', 
+        fontWeight: 600,
+        '@media (max-width:600px)': {
+          fontSize: '1rem',
+          mb: 1.5,
+          mt: 2,
+        },
+      }}>
         Dados Bancários
       </Typography>
 
