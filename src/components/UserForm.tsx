@@ -157,12 +157,12 @@ const UserForm: React.FC = () => {
           return;
         }
         
-        // Validar tamanho do arquivo (máximo 10MB - vamos processar no backend)
-        const maxSize = 10 * 1024 * 1024; // 10MB
+        // Validar tamanho do arquivo (máximo 20MB - vamos processar no backend)
+        const maxSize = 20 * 1024 * 1024; // 20MB
         if (file.size > maxSize) {
           setErrors(prev => ({
             ...prev,
-            [name]: 'Arquivo muito grande. Máximo 10MB.',
+            [name]: 'Arquivo muito grande. Máximo 20MB.',
           }));
           return;
         }
@@ -183,12 +183,12 @@ const UserForm: React.FC = () => {
           return;
         }
         
-        // Validar tamanho do arquivo (máximo 10MB)
-        const maxSize = 10 * 1024 * 1024; // 10MB
+        // Validar tamanho do arquivo (máximo 20MB)
+        const maxSize = 20 * 1024 * 1024; // 20MB
         if (file.size > maxSize) {
           setErrors(prev => ({
             ...prev,
-            [name]: 'Arquivo muito grande. Máximo 10MB.',
+            [name]: 'Arquivo muito grande. Máximo 20MB.',
           }));
           return;
         }
@@ -307,7 +307,11 @@ const UserForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    console.log('🚀 Iniciando envio do formulário...');
+    console.log('📝 Dados do formulário:', formData);
+    
     const validationErrors = validateForm();
+    console.log('🔍 Erros de validação:', validationErrors);
     
     // Verificar se o consentimento foi aceito
     if (!consentAccepted) {
@@ -315,6 +319,7 @@ const UserForm: React.FC = () => {
     }
     
     if (Object.keys(validationErrors).length > 0) {
+      console.log('❌ Formulário tem erros de validação, parando envio');
       setErrors(validationErrors);
       setShowValidationAlert(true);
       // Scroll to top to show the error alert
@@ -322,6 +327,7 @@ const UserForm: React.FC = () => {
       return;
     }
 
+    console.log('✅ Formulário validado com sucesso, iniciando envio...');
     setShowValidationAlert(false);
     setLoading(true);
     try {
@@ -366,21 +372,29 @@ const UserForm: React.FC = () => {
       }
       
       // Enviar dados para o backend
+      console.log('🌐 Enviando para:', `${config.apiUrl}/api/users`);
+      console.log('📤 FormData sendo enviado:', Object.fromEntries(formDataToSend.entries()));
+      
       const response = await fetch(`${config.apiUrl}/api/users`, {
         method: 'POST',
         body: formDataToSend, // FormData não precisa do Content-Type header
       });
 
+      console.log('📥 Resposta recebida:', response.status, response.statusText);
+
       if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
+        const errorText = await response.text();
+        console.error('❌ Erro na resposta:', errorText);
+        throw new Error(`Erro HTTP: ${response.status} - ${errorText}`);
       }
 
       const result = await response.json();
-      console.log('Usuário e documentos criados:', result);
+      console.log('✅ Usuário e documentos criados:', result);
       setSubmitted(true);
     } catch (error) {
-      console.error('Erro ao enviar formulário:', error);
-      // Você pode adicionar um estado de erro aqui se quiser mostrar uma mensagem ao usuário
+      console.error('💥 Erro ao enviar formulário:', error);
+      // Mostrar erro para o usuário
+      alert(`Erro ao enviar formulário: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     } finally {
       setLoading(false);
     }
