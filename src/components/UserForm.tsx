@@ -21,6 +21,7 @@ import {
   validateAccount,
 } from '../utils/formatters';
 import { getErrorMessages, isValidImage } from '../utils/formHelpers';
+import { compressFileByType, validateCompressedFileSize } from '../utils/quickImageCompression';
 import { fieldStyles, selectFieldStyles, labelProps } from '../styles/formStyles';
 import config from '../config/index';
 import './EssencialForm.css';
@@ -67,6 +68,18 @@ const UserForm: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
   const [showValidationAlert, setShowValidationAlert] = useState(false);
   const [consentAccepted, setConsentAccepted] = useState(false);
+  const [connectionTest, setConnectionTest] = useState<{
+    testing: boolean;
+    success: boolean | null;
+    message: string;
+  }>({
+    testing: false,
+    success: null,
+    message: ''
+  });
+  const [fileProcessing, setFileProcessing] = useState<{
+    [key: string]: string;
+  }>({});
 
   const handleDocumentTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newDocumentType = event.target.value;
@@ -157,20 +170,69 @@ const UserForm: React.FC = () => {
           return;
         }
         
-        // Validar tamanho do arquivo (máximo 20MB - vamos processar no backend)
-        const maxSize = 20 * 1024 * 1024; // 20MB
-        if (file.size > maxSize) {
+        try {
+          // Aplicar compressão rápida baseada no tipo
+          let processedFile = file;
+          
+          // Callback para feedback de progresso
+          const onProgress = (message: string) => {
+            setFileProcessing(prev => ({
+              ...prev,
+              [name]: message
+            }));
+          };
+          
+          onProgress('Iniciando otimização...');
+          
+          if (name === 'documentFront' || name === 'documentBack') {
+            processedFile = await compressFileByType(file, 'document', onProgress);
+          } else if (name === 'selfie') {
+            processedFile = await compressFileByType(file, 'selfie', onProgress);
+          }
+          
+          // Validar tamanho final (máximo 5MB após compressão)
+          if (!validateCompressedFileSize(processedFile, 5)) {
+            setErrors(prev => ({
+              ...prev,
+              [name]: 'Arquivo ainda muito grande após compressão. Tente uma imagem menor.',
+            }));
+            setFileProcessing(prev => ({
+              ...prev,
+              [name]: ''
+            }));
+            return;
+          }
+
+          setFormData(prev => ({
+            ...prev,
+            [name]: processedFile,
+          }));
+          
+          // Limpar erro se havia
           setErrors(prev => ({
             ...prev,
-            [name]: 'Arquivo muito grande. Máximo 20MB.',
+            [name]: '',
           }));
-          return;
+          
+          // Limpar status de processamento após um tempo
+          setTimeout(() => {
+            setFileProcessing(prev => ({
+              ...prev,
+              [name]: ''
+            }));
+          }, 2000);
+          
+        } catch (error) {
+          console.error('Erro ao processar imagem:', error);
+          setErrors(prev => ({
+            ...prev,
+            [name]: 'Erro ao processar imagem. Tente novamente.',
+          }));
+          setFileProcessing(prev => ({
+            ...prev,
+            [name]: ''
+          }));
         }
-
-        setFormData(prev => ({
-          ...prev,
-          [name]: file,
-        }));
         
       } else {
         // Para comprovante de residência, aceita PDF também
@@ -183,20 +245,68 @@ const UserForm: React.FC = () => {
           return;
         }
         
-        // Validar tamanho do arquivo (máximo 20MB)
-        const maxSize = 20 * 1024 * 1024; // 20MB
-        if (file.size > maxSize) {
+        try {
+          let processedFile = file;
+          
+          // Callback para feedback de progresso
+          const onProgress = (message: string) => {
+            setFileProcessing(prev => ({
+              ...prev,
+              [name]: message
+            }));
+          };
+          
+          // Se for imagem, comprimir
+          if (file.type.startsWith('image/')) {
+            onProgress('Otimizando comprovante...');
+            processedFile = await compressFileByType(file, 'residenceProof', onProgress);
+          } else {
+            onProgress('Arquivo PDF mantido original');
+          }
+          
+          // Validar tamanho final (máximo 8MB para comprovante)
+          if (!validateCompressedFileSize(processedFile, 8)) {
+            setErrors(prev => ({
+              ...prev,
+              [name]: 'Arquivo muito grande. Máximo 8MB.',
+            }));
+            setFileProcessing(prev => ({
+              ...prev,
+              [name]: ''
+            }));
+            return;
+          }
+
+          setFormData(prev => ({
+            ...prev,
+            [name]: processedFile,
+          }));
+          
+          // Limpar erro se havia
           setErrors(prev => ({
             ...prev,
-            [name]: 'Arquivo muito grande. Máximo 20MB.',
+            [name]: '',
           }));
-          return;
+          
+          // Limpar status de processamento após um tempo
+          setTimeout(() => {
+            setFileProcessing(prev => ({
+              ...prev,
+              [name]: ''
+            }));
+          }, 2000);
+          
+        } catch (error) {
+          console.error('Erro ao processar arquivo:', error);
+          setErrors(prev => ({
+            ...prev,
+            [name]: 'Erro ao processar arquivo. Tente novamente.',
+          }));
+          setFileProcessing(prev => ({
+            ...prev,
+            [name]: ''
+          }));
         }
-
-        setFormData(prev => ({
-          ...prev,
-          [name]: file,
-        }));
       }
 
       // Clear error when user selects a valid file
@@ -211,6 +321,49 @@ const UserForm: React.FC = () => {
       if (showValidationAlert) {
         setShowValidationAlert(false);
       }
+    }
+  };
+
+  // Função para testar conexão com o backend
+  const testConnection = async () => {
+    setConnectionTest({
+      testing: true,
+      success: null,
+      message: 'Testando conexão...'
+    });
+
+    try {
+      console.log('🧪 Testando conexão com:', `${config.apiUrl}/health`);
+      
+      const response = await fetch(`${config.apiUrl}/health`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('📥 Resposta do teste:', response.status, response.statusText);
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('✅ Conexão bem-sucedida:', result);
+        
+        setConnectionTest({
+          testing: false,
+          success: true,
+          message: `✅ Conexão OK! Backend respondeu: ${result.message}`
+        });
+      } else {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error('❌ Erro na conexão:', error);
+      
+      setConnectionTest({
+        testing: false,
+        success: false,
+        message: `❌ Erro: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
+      });
     }
   };
 
@@ -691,6 +844,49 @@ const UserForm: React.FC = () => {
           mt: 2,
         },
       }}>
+        {/* Botão de Teste de Conexão */}
+        <Box sx={{ 
+          mb: 3,
+          p: 2,
+          backgroundColor: connectionTest.success === true ? '#E8F5E8' : connectionTest.success === false ? '#FFEBEE' : '#F5F5F5',
+          borderRadius: '12px',
+          border: '1px solid rgba(0, 0, 0, 0.1)',
+        }}>
+          <Button
+            onClick={testConnection}
+            disabled={connectionTest.testing}
+            variant="outlined"
+            sx={{
+              mb: connectionTest.message ? 2 : 0,
+              borderColor: '#0056FF',
+              color: '#0056FF',
+              '&:hover': {
+                borderColor: '#003f8a',
+                backgroundColor: 'rgba(0, 86, 255, 0.04)',
+              },
+            }}
+          >
+            {connectionTest.testing ? (
+              <>
+                <CircularProgress size={20} sx={{ mr: 1 }} />
+                Testando...
+              </>
+            ) : (
+              '🔗 Testar Conexão Backend'
+            )}
+          </Button>
+          
+          {connectionTest.message && (
+            <Typography variant="body2" sx={{ 
+              mt: 1,
+              fontFamily: 'monospace',
+              fontSize: '0.85rem',
+              color: connectionTest.success === true ? '#2E7D32' : connectionTest.success === false ? '#C62828' : '#666',
+            }}>
+              {connectionTest.message}
+            </Typography>
+          )}
+        </Box>
         {/* Informações Pessoais */}
         <Box sx={{ 
           mb: 4,
@@ -777,6 +973,7 @@ const UserForm: React.FC = () => {
             onDocumentTypeChange={handleDocumentTypeChange}
             onFileChange={handleFileChange}
             setFormData={setFormData}
+            fileProcessing={fileProcessing}
           />
         </Box>
 

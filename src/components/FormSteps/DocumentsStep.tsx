@@ -16,6 +16,7 @@ interface DocumentsStepProps {
   onDocumentTypeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+  fileProcessing?: { [key: string]: string };
 }
 
 const DocumentsStep: React.FC<DocumentsStepProps> = ({
@@ -23,7 +24,8 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
   errors,
   onDocumentTypeChange,
   onFileChange,
-  setFormData
+  setFormData,
+  fileProcessing = {}
 }) => {
   return (
     <>
@@ -115,6 +117,17 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
                   onClick={() => setFormData(prev => ({ ...prev, documentFront: null }))}
                 />
               </Box>
+            )}
+            {fileProcessing.documentFront && (
+              <Typography sx={{ 
+                fontSize: '0.75rem', 
+                color: '#666', 
+                mt: 0.5, 
+                textAlign: 'center',
+                fontStyle: 'italic'
+              }}>
+                {fileProcessing.documentFront}
+              </Typography>
             )}
             {!formData.documentFront && errors.documentFront && (
               <Typography variant="caption" color="error" sx={{ mt: 1, mb: 1, display: 'block' }}>{errors.documentFront}</Typography>
