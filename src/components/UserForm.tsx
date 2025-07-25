@@ -14,11 +14,13 @@ import {
   formatPhone,
   formatAgency,
   formatAccount,
+  formatAccountDv,
   validateCpf,
   validateCnpj,
   validateEmail,
   validatePhone,
   validateAccount,
+  validateAccountDv,
 } from '../utils/formatters';
 import { getErrorMessages, isValidImage } from '../utils/formHelpers';
 import { compressImage } from '../utils/imageUtils';
@@ -55,6 +57,7 @@ const UserForm: React.FC = () => {
     accountType: '',
     agency: '',
     account: '',
+    accountDv: '',
     // Documentos - ATIVOS
     documentType: 'RG',
     documentFront: null,
@@ -100,6 +103,9 @@ const UserForm: React.FC = () => {
         break;
       case 'account':
         formattedValue = formatAccount(value);
+        break;
+      case 'accountDv':
+        formattedValue = formatAccountDv(value);
         break;
       case 'fullName':
         formattedValue = value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
@@ -296,7 +302,13 @@ const UserForm: React.FC = () => {
     if (!formData.account.trim()) {
       newErrors.account = 'Conta é obrigatória';
     } else if (!validateAccount(formData.account)) {
-      newErrors.account = 'Conta deve ter entre 6 e 7 dígitos';
+      newErrors.account = 'Conta deve ter entre 1 e 9 dígitos';
+    }
+
+    if (!formData.accountDv.trim()) {
+      newErrors.accountDv = 'Dígito verificador é obrigatório';
+    } else if (!validateAccountDv(formData.accountDv)) {
+      newErrors.accountDv = 'DV deve ter entre 1 e 2 dígitos';
     }
 
     // Validação dos documentos - ATIVO
@@ -367,7 +379,9 @@ const UserForm: React.FC = () => {
       formDataToSend.append('bankName', formData.bankName);
       formDataToSend.append('accountType', formData.accountType);
       formDataToSend.append('agency', formData.agency);
-      formDataToSend.append('account', formData.account);
+      // Concatenar conta e DV para manter compatibilidade com o backend
+      const fullAccount = formData.account + (formData.accountDv ? '-' + formData.accountDv : '');
+      formDataToSend.append('account', fullAccount);
       
       // Documentos - ATIVOS
       formDataToSend.append('documentType', formData.documentType);

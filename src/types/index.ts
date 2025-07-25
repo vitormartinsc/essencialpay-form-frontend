@@ -20,6 +20,7 @@ export interface FormData {
   accountType: string;
   agency: string;
   account: string;
+  accountDv: string;
   // Documentos - ATIVOS
   documentType: string;
   documentFront: File | null;
@@ -50,6 +51,7 @@ export interface FormErrors {
   accountType?: string;
   agency?: string;
   account?: string;
+  accountDv?: string;
   // Documentos - ATIVOS
   documentType?: string;
   documentFront?: string;

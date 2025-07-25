@@ -211,16 +211,34 @@ const BankingStep: React.FC<BankingStepProps> = ({
             }}
           />
         </Box>
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 2 }}>
           <TextField
             fullWidth
-            label="Conta"
+            label="Conta (até 9 dígitos)"
             name="account"
             value={formData.account}
             onChange={onFieldChange}
             error={!!errors.account}
             helperText={errors.account}
-            placeholder="000000-0"
+            placeholder="123456789"
+            InputLabelProps={labelProps}
+            sx={{
+              ...fieldStyles,
+              mt: 0,
+              mb: 0
+            }}
+          />
+        </Box>
+        <Box sx={{ flex: 0.5 }}>
+          <TextField
+            fullWidth
+            label="DV"
+            name="accountDv"
+            value={formData.accountDv}
+            onChange={onFieldChange}
+            error={!!errors.accountDv}
+            helperText={errors.accountDv}
+            placeholder="0"
             InputLabelProps={labelProps}
             sx={{
               ...fieldStyles,

@@ -132,20 +132,36 @@ export const formatAgency = (value: string): string => {
 /**
  * Format account input to XXXXXX-X pattern (6 digits + dash + 1 check digit)
  */
+/**
+ * Format account number (only digits, up to 9 digits)
+ */
 export const formatAccount = (value: string): string => {
-  const onlyDigits = value.replace(/\D/g, '').slice(0, 7);
-  if (onlyDigits.length > 6) {
-    return onlyDigits.slice(0, 6) + '-' + onlyDigits.slice(6);
-  }
+  const onlyDigits = value.replace(/\D/g, '').slice(0, 9);
   return onlyDigits;
 };
 
 /**
- * Validate account number format
+ * Format account DV (only digits, up to 2 digits)
+ */
+export const formatAccountDv = (value: string): string => {
+  const onlyDigits = value.replace(/\D/g, '').slice(0, 2);
+  return onlyDigits;
+};
+
+/**
+ * Validate account number format (1-9 digits)
  */
 export const validateAccount = (account: string): boolean => {
   const cleanAccount = account.replace(/\D/g, '');
-  return cleanAccount.length >= 6 && cleanAccount.length <= 7;
+  return cleanAccount.length >= 1 && cleanAccount.length <= 9;
+};
+
+/**
+ * Validate account DV format (1-2 digits)
+ */
+export const validateAccountDv = (accountDv: string): boolean => {
+  const cleanAccountDv = accountDv.replace(/\D/g, '');
+  return cleanAccountDv.length >= 1 && cleanAccountDv.length <= 2;
 };
 
 /**
