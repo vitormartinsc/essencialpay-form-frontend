@@ -64,10 +64,100 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
         />
       </RadioGroup>
 
+      {/* Instruções específicas para RG */}
+      {formData.documentType === 'RG' && (
+        <Box sx={{ 
+          mb: 3, 
+          backgroundColor: '#fff3e0', 
+          border: '1px solid #ff9800', 
+          borderRadius: '8px', 
+          padding: '16px', 
+          maxWidth: '400px', 
+          margin: '0 auto 24px auto'
+        }}>
+          <Typography variant="h6" sx={{ 
+            color: '#e65100', 
+            fontWeight: 'bold', 
+            mb: 2, 
+            fontSize: '1rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1
+          }}>
+            📋 Instruções importantes para o RG
+          </Typography>
+          <Box component="ul" sx={{ 
+            margin: 0, 
+            paddingLeft: '16px',
+            color: '#bf360c',
+            fontSize: '0.85rem',
+            lineHeight: 1.5
+          }}>
+            <li><strong>CPF deve estar visível e legível</strong></li>
+            <li>Nome completo claramente legível</li>
+            <li>Número do RG visível</li>
+            <li>Foto da identidade nítida</li>
+            <li>Boa iluminação, sem sombras</li>
+            <li>Tire a foto de frente, sem inclinação</li>
+            <li>Documento deve ocupar toda a tela</li>
+          </Box>
+        </Box>
+      )}
+
+      {/* Instruções específicas para CNH */}
+      {formData.documentType === 'CNH' && (
+        <Box sx={{ 
+          mb: 3, 
+          backgroundColor: '#e8f5e8', 
+          border: '1px solid #4caf50', 
+          borderRadius: '8px', 
+          padding: '16px', 
+          maxWidth: '400px', 
+          margin: '0 auto 24px auto'
+        }}>
+          <Typography variant="h6" sx={{ 
+            color: '#2e7d32', 
+            fontWeight: 'bold', 
+            mb: 2, 
+            fontSize: '1rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1
+          }}>
+            🚗 Instruções importantes para a CNH
+          </Typography>
+          <Box component="ul" sx={{ 
+            margin: 0, 
+            paddingLeft: '16px',
+            color: '#1b5e20',
+            fontSize: '0.85rem',
+            lineHeight: 1.5
+          }}>
+            <li><strong>CPF deve estar visível e legível</strong></li>
+            <li>Nome completo claramente legível</li>
+            <li>Número da CNH visível</li>
+            <li>Foto da CNH nítida</li>
+            <li>Data de validade legível</li>
+            <li>Boa iluminação, sem reflexos</li>
+            <li>Tire a foto de frente, sem inclinação</li>
+            <li>Documento deve ocupar toda a tela</li>
+          </Box>
+        </Box>
+      )}
+
       {formData.documentType === 'RG' ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: { xs: 1, sm: 3 }, mb: 2, alignItems: 'flex-start', flexWrap: 'wrap' }}>
           <Box sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#e3f2fd', padding: '20px 15px 15px 15px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', minWidth: 0, width: { xs: 180, sm: 200 }, minHeight: 0, height: 'auto' }}>
             <Typography variant="body2" sx={{ mb: 1.5, color: '#0056FF', fontWeight: 'bold', fontSize: '0.9rem', textAlign: 'center', lineHeight: 1.3 }}>Foto da frente da Identidade</Typography>
+            <Typography variant="caption" sx={{ 
+              mb: 1, 
+              color: '#666', 
+              fontSize: '0.7rem', 
+              textAlign: 'center',
+              fontStyle: 'italic'
+            }}>
+              Nome, RG e foto devem estar legíveis
+            </Typography>
             <Box sx={{ width: '70px', height: '70px', backgroundColor: '#f8f9fa', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5, mt: 0.5 }}>
               <img src={idFrente} alt="RG Frente" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
             </Box>
@@ -119,9 +209,52 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
             {!formData.documentFront && errors.documentFront && (
               <Typography variant="caption" color="error" sx={{ mt: 1, mb: 1, display: 'block' }}>{errors.documentFront}</Typography>
             )}
+            
+            {/* Instruções de upload para RG Frente */}
+            <Box sx={{ 
+              width: '100%',
+              mt: 1.5,
+              padding: '10px',
+              backgroundColor: '#fff3e0',
+              borderRadius: '8px',
+              border: '1px solid #ffcc02'
+            }}>
+              <Typography variant="caption" sx={{ 
+                color: '#e65100', 
+                fontSize: '0.7rem',
+                display: 'block',
+                textAlign: 'center',
+                fontWeight: 'bold',
+                mb: 0.5
+              }}>
+                Informações obrigatórias:
+              </Typography>
+              <Typography variant="caption" sx={{ 
+                color: '#e65100', 
+                fontSize: '0.65rem',
+                display: 'block',
+                textAlign: 'center',
+                lineHeight: 1.3
+              }}>
+                • Nome completo legível{'\n'}
+                • Número do RG visível{'\n'}
+                • Órgão emissor visível{'\n'}
+                • Foto do documento nítida{'\n'}
+                • Boa iluminação, sem reflexos
+              </Typography>
+            </Box>
           </Box>
           <Box sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#e3f2fd', padding: '20px 15px 15px 15px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', minWidth: 0, width: { xs: 180, sm: 200 }, minHeight: 0, height: 'auto' }}>
             <Typography variant="body2" sx={{ mb: 1.5, color: '#0056FF', fontWeight: 'bold', fontSize: '0.9rem', textAlign: 'center', lineHeight: 1.3 }}>Foto do verso da Identidade</Typography>
+            <Typography variant="caption" sx={{ 
+              mb: 1, 
+              color: '#666', 
+              fontSize: '0.7rem', 
+              textAlign: 'center',
+              fontStyle: 'italic'
+            }}>
+              CPF deve estar legível
+            </Typography>
             <Box sx={{ width: '70px', height: '70px', backgroundColor: '#f8f9fa', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5, mt: 0.5 }}>
               <img src={idVerso} alt="RG Verso" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
             </Box>
@@ -173,12 +306,55 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
             {!formData.documentBack && errors.documentBack && (
               <Typography variant="caption" color="error" sx={{ mt: 1, mb: 1, display: 'block' }}>{errors.documentBack}</Typography>
             )}
+            
+            {/* Instruções de upload para RG Verso */}
+            <Box sx={{ 
+              width: '100%',
+              mt: 1.5,
+              padding: '10px',
+              backgroundColor: '#fff3e0',
+              borderRadius: '8px',
+              border: '1px solid #ffcc02'
+            }}>
+              <Typography variant="caption" sx={{ 
+                color: '#e65100', 
+                fontSize: '0.7rem',
+                display: 'block',
+                textAlign: 'center',
+                fontWeight: 'bold',
+                mb: 0.5
+              }}>
+                Informações obrigatórias:
+              </Typography>
+              <Typography variant="caption" sx={{ 
+                color: '#e65100', 
+                fontSize: '0.65rem',
+                display: 'block',
+                textAlign: 'center',
+                lineHeight: 1.3
+              }}>
+                • CPF deve estar visível e legível{'\n'}
+                • Assinatura visível{'\n'}
+                • Data de expedição legível{'\n'}
+                • Foto nítida, sem cortes{'\n'}
+                • Boa iluminação, sem reflexos
+              </Typography>
+            </Box>
           </Box>
         </Box>
       ) : (
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
           <Box sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#e3f2fd', padding: '20px 15px 15px 15px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', minWidth: 0, width: { xs: 180, sm: 200 }, minHeight: 0, height: 'auto' }}>
             <Typography variant="body2" sx={{ mb: 1.5, color: '#0056FF', fontWeight: 'bold', fontSize: '0.9rem', textAlign: 'center', lineHeight: 1.3 }}>Foto da CNH</Typography>
+            <Typography variant="caption" sx={{ 
+              mb: 1, 
+              color: '#666', 
+              fontSize: '0.7rem', 
+              textAlign: 'center',
+              fontStyle: 'italic'
+            }}>
+              Nome, número da CNH e CPF legíveis
+            </Typography>
             <Box sx={{ width: '70px', height: '70px', backgroundColor: '#f8f9fa', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5, mt: 0.5 }}>
               <img src={cnhImage} alt="CNH" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
             </Box>
@@ -230,6 +406,41 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
             {!formData.documentFront && errors.documentFront && (
               <Typography variant="caption" color="error" sx={{ mt: 1, mb: 1, display: 'block' }}>{errors.documentFront}</Typography>
             )}
+            
+            {/* Instruções de upload para CNH */}
+            <Box sx={{ 
+              width: '100%',
+              mt: 1.5,
+              padding: '10px',
+              backgroundColor: '#fff3e0',
+              borderRadius: '8px',
+              border: '1px solid #ffcc02'
+            }}>
+              <Typography variant="caption" sx={{ 
+                color: '#e65100', 
+                fontSize: '0.7rem',
+                display: 'block',
+                textAlign: 'center',
+                fontWeight: 'bold',
+                mb: 0.5
+              }}>
+                Informações obrigatórias:
+              </Typography>
+              <Typography variant="caption" sx={{ 
+                color: '#e65100', 
+                fontSize: '0.65rem',
+                display: 'block',
+                textAlign: 'center',
+                lineHeight: 1.3
+              }}>
+                • Nome completo legível{'\n'}
+                • Número da CNH visível{'\n'}
+                • CPF deve estar legível{'\n'}
+                • Data de validade visível{'\n'}
+                • Foto nítida, sem reflexos{'\n'}
+                • Documento completo na foto
+              </Typography>
+            </Box>
           </Box>
         </Box>
       )}
@@ -346,6 +557,15 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
           }}>
             Sua Selfie
           </Typography>
+          <Typography variant="caption" sx={{ 
+            mb: 1, 
+            color: '#666', 
+            fontSize: '0.7rem', 
+            textAlign: 'center',
+            fontStyle: 'italic'
+          }}>
+            Rosto e documento visíveis juntos
+          </Typography>
           <Box sx={{ 
             width: '70px', 
             height: '70px', 
@@ -444,6 +664,41 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
               {errors.selfie}
             </Typography>
           )}
+          
+          {/* Instruções de upload para Selfie */}
+          <Box sx={{ 
+            width: '100%',
+            mt: 1.5,
+            padding: '10px',
+            backgroundColor: '#fff3e0',
+            borderRadius: '8px',
+            border: '1px solid #ffcc02'
+          }}>
+            <Typography variant="caption" sx={{ 
+              color: '#e65100', 
+              fontSize: '0.7rem',
+              display: 'block',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              mb: 0.5
+            }}>
+              Requisitos para selfie:
+            </Typography>
+            <Typography variant="caption" sx={{ 
+              color: '#e65100', 
+              fontSize: '0.65rem',
+              display: 'block',
+              textAlign: 'center',
+              lineHeight: 1.3
+            }}>
+              • Rosto totalmente visível{'\n'}
+              • Segure o documento ao lado do rosto{'\n'}
+              • Olhe diretamente para a câmera{'\n'}
+              • Boa iluminação, sem sombras{'\n'}
+              • Sem óculos escuros ou bonés{'\n'}
+              • Documento e rosto na mesma foto
+            </Typography>
+          </Box>
         </Box>
       </Box>
 
@@ -461,9 +716,52 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
         Por último, o comprovante de residência
       </Typography>
 
+      {/* Instruções para Comprovante de Residência */}
+      <Box sx={{ 
+        mb: 3, 
+        backgroundColor: '#f3e5f5', 
+        border: '1px solid #9c27b0', 
+        borderRadius: '8px', 
+        padding: '12px 16px', 
+        maxWidth: '400px', 
+        margin: '0 auto 24px auto'
+      }}>
+        <Typography variant="body2" sx={{ 
+          color: '#6a1b9a', 
+          textAlign: 'center',
+          fontSize: '0.85rem',
+          fontWeight: 600,
+          mb: 1
+        }}>
+          🏠 Instruções importantes para o comprovante
+        </Typography>
+        <Typography variant="body2" sx={{ 
+          color: '#4a148c', 
+          fontSize: '0.8rem',
+          lineHeight: 1.4,
+          textAlign: 'left'
+        }}>
+          <strong>✓ Nome completo</strong> deve aparecer no documento<br/>
+          <strong>✓ Endereço completo</strong> deve estar legível<br/>
+          <strong>✓ Data recente</strong> (últimos 3 meses)<br/>
+          <strong>✓ Conta de luz, água, gás, telefone</strong> ou extrato bancário<br/>
+          <strong>✓ Documento oficial</strong> (não aceito boleto)<br/>
+          <strong>✓ Texto legível</strong>, sem borrões ou cortes
+        </Typography>
+      </Box>
+
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-        <Box sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#e3f2fd', padding: '20px 15px 15px 15px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', minWidth: 0, width: { xs: 180, sm: 200 }, minHeight: 0, height: 'auto' }}>
-          <Typography variant="body2" sx={{ mb: 1.5, color: '#0056FF', fontWeight: 'bold', fontSize: '0.9rem', textAlign: 'center', lineHeight: 1.3 }}>Comprovante de Residência</Typography>
+        <Box sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#f3e5f5', padding: '20px 15px 15px 15px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', minWidth: 0, width: { xs: 180, sm: 200 }, minHeight: 0, height: 'auto', border: '1px solid #ba68c8' }}>
+          <Typography variant="body2" sx={{ mb: 1.5, color: '#6a1b9a', fontWeight: 'bold', fontSize: '0.9rem', textAlign: 'center', lineHeight: 1.3 }}>Comprovante de Residência</Typography>
+          <Typography variant="caption" sx={{ 
+            mb: 1, 
+            color: '#666', 
+            fontSize: '0.7rem', 
+            textAlign: 'center',
+            fontStyle: 'italic'
+          }}>
+            Nome e endereço devem estar visíveis
+          </Typography>
           <Box sx={{ width: '70px', height: '70px', backgroundColor: '#f9f9f9', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5, mt: 0.5 }}>
             <img src={comprovanteResidencia} alt="Comprovante de Residência" style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
           </Box>
@@ -515,7 +813,74 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
           {!formData.residenceProof && errors.residenceProof && (
             <Typography variant="caption" color="error" sx={{ mt: 1, mb: 1, display: 'block' }}>{errors.residenceProof}</Typography>
           )}
+          
+          {/* Instruções de upload para Comprovante de Residência */}
+          <Box sx={{ 
+            width: '100%',
+            mt: 1.5,
+            padding: '10px',
+            backgroundColor: '#fff3e0',
+            borderRadius: '8px',
+            border: '1px solid #ffcc02'
+          }}>
+            <Typography variant="caption" sx={{ 
+              color: '#e65100', 
+              fontSize: '0.7rem',
+              display: 'block',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              mb: 0.5
+            }}>
+              Documentos aceitos:
+            </Typography>
+            <Typography variant="caption" sx={{ 
+              color: '#e65100', 
+              fontSize: '0.65rem',
+              display: 'block',
+              textAlign: 'center',
+              lineHeight: 1.3
+            }}>
+              • Conta de luz, água, gás ou telefone{'\n'}
+              • Extrato bancário{'\n'}
+              • Contrato de aluguel{'\n'}
+              • Correspondência bancária{'\n'}
+              • Nome e endereço legíveis{'\n'}
+              • Data dos últimos 3 meses
+            </Typography>
+          </Box>
         </Box>
+      </Box>
+
+      {/* Instruções gerais de qualidade */}
+      <Box sx={{ 
+        backgroundColor: '#f5f5f5', 
+        padding: 2, 
+        borderRadius: 2, 
+        mt: 3, 
+        mb: 2,
+        border: '1px solid #e0e0e0'
+      }}>
+        <Typography variant="h6" sx={{ 
+          color: '#0056FF', 
+          fontWeight: 'bold', 
+          fontSize: '0.9rem', 
+          mb: 1.5,
+          textAlign: 'center'
+        }}>
+          📋 Dicas importantes para suas fotos
+        </Typography>
+        <Typography variant="body2" sx={{ 
+          color: '#666', 
+          fontSize: '0.8rem', 
+          lineHeight: 1.5,
+          textAlign: 'left'
+        }}>
+          • <strong>Boa iluminação:</strong> Use luz natural ou ambiente bem iluminado<br/>
+          • <strong>Foco nítido:</strong> Certifique-se de que todos os dados estão legíveis<br/>
+          • <strong>Foto completa:</strong> Capture todo o documento, sem cortes<br/>
+          • <strong>Sem reflexos:</strong> Evite flash que pode causar brilho na foto<br/>
+          • <strong>Documento plano:</strong> Mantenha o documento reto, sem dobras
+        </Typography>
       </Box>
 
       <Typography variant="caption" sx={{ color: '#666', mt: 2, display: 'block', textAlign: 'center' }}>
