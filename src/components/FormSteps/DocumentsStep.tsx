@@ -98,8 +98,6 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
             <li>Número do RG visível</li>
             <li>Foto da identidade nítida</li>
             <li>Boa iluminação, sem sombras</li>
-            <li>Tire a foto de frente, sem inclinação</li>
-            <li>Documento deve ocupar toda a tela</li>
           </Box>
         </Box>
       )}
@@ -139,8 +137,6 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
             <li>Foto da CNH nítida</li>
             <li>Data de validade legível</li>
             <li>Boa iluminação, sem reflexos</li>
-            <li>Tire a foto de frente, sem inclinação</li>
-            <li>Documento deve ocupar toda a tela</li>
           </Box>
         </Box>
       )}
@@ -214,21 +210,11 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
             <Box sx={{ 
               width: '100%',
               mt: 1.5,
-              padding: '10px',
+              padding: '8px',
               backgroundColor: '#fff3e0',
-              borderRadius: '8px',
+              borderRadius: '6px',
               border: '1px solid #ffcc02'
             }}>
-              <Typography variant="caption" sx={{ 
-                color: '#e65100', 
-                fontSize: '0.7rem',
-                display: 'block',
-                textAlign: 'center',
-                fontWeight: 'bold',
-                mb: 0.5
-              }}>
-                Informações obrigatórias:
-              </Typography>
               <Typography variant="caption" sx={{ 
                 color: '#e65100', 
                 fontSize: '0.65rem',
@@ -236,11 +222,7 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
                 textAlign: 'center',
                 lineHeight: 1.3
               }}>
-                • Nome completo legível{'\n'}
-                • Número do RG visível{'\n'}
-                • Órgão emissor visível{'\n'}
-                • Foto do documento nítida{'\n'}
-                • Boa iluminação, sem reflexos
+                Dados legíveis com boa iluminação
               </Typography>
             </Box>
           </Box>
@@ -311,21 +293,11 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
             <Box sx={{ 
               width: '100%',
               mt: 1.5,
-              padding: '10px',
+              padding: '8px',
               backgroundColor: '#fff3e0',
-              borderRadius: '8px',
+              borderRadius: '6px',
               border: '1px solid #ffcc02'
             }}>
-              <Typography variant="caption" sx={{ 
-                color: '#e65100', 
-                fontSize: '0.7rem',
-                display: 'block',
-                textAlign: 'center',
-                fontWeight: 'bold',
-                mb: 0.5
-              }}>
-                Informações obrigatórias:
-              </Typography>
               <Typography variant="caption" sx={{ 
                 color: '#e65100', 
                 fontSize: '0.65rem',
@@ -333,11 +305,7 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
                 textAlign: 'center',
                 lineHeight: 1.3
               }}>
-                • CPF deve estar visível e legível{'\n'}
-                • Assinatura visível{'\n'}
-                • Data de expedição legível{'\n'}
-                • Foto nítida, sem cortes{'\n'}
-                • Boa iluminação, sem reflexos
+                CPF legível com boa iluminação
               </Typography>
             </Box>
           </Box>
@@ -411,21 +379,11 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
             <Box sx={{ 
               width: '100%',
               mt: 1.5,
-              padding: '10px',
+              padding: '8px',
               backgroundColor: '#fff3e0',
-              borderRadius: '8px',
+              borderRadius: '6px',
               border: '1px solid #ffcc02'
             }}>
-              <Typography variant="caption" sx={{ 
-                color: '#e65100', 
-                fontSize: '0.7rem',
-                display: 'block',
-                textAlign: 'center',
-                fontWeight: 'bold',
-                mb: 0.5
-              }}>
-                Informações obrigatórias:
-              </Typography>
               <Typography variant="caption" sx={{ 
                 color: '#e65100', 
                 fontSize: '0.65rem',
@@ -433,12 +391,7 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
                 textAlign: 'center',
                 lineHeight: 1.3
               }}>
-                • Nome completo legível{'\n'}
-                • Número da CNH visível{'\n'}
-                • CPF deve estar legível{'\n'}
-                • Data de validade visível{'\n'}
-                • Foto nítida, sem reflexos{'\n'}
-                • Documento completo na foto
+                Dados e CPF legíveis com boa iluminação
               </Typography>
             </Box>
           </Box>
@@ -664,41 +617,6 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
               {errors.selfie}
             </Typography>
           )}
-          
-          {/* Instruções de upload para Selfie */}
-          <Box sx={{ 
-            width: '100%',
-            mt: 1.5,
-            padding: '10px',
-            backgroundColor: '#fff3e0',
-            borderRadius: '8px',
-            border: '1px solid #ffcc02'
-          }}>
-            <Typography variant="caption" sx={{ 
-              color: '#e65100', 
-              fontSize: '0.7rem',
-              display: 'block',
-              textAlign: 'center',
-              fontWeight: 'bold',
-              mb: 0.5
-            }}>
-              Requisitos para selfie:
-            </Typography>
-            <Typography variant="caption" sx={{ 
-              color: '#e65100', 
-              fontSize: '0.65rem',
-              display: 'block',
-              textAlign: 'center',
-              lineHeight: 1.3
-            }}>
-              • Rosto totalmente visível{'\n'}
-              • Segure o documento ao lado do rosto{'\n'}
-              • Olhe diretamente para a câmera{'\n'}
-              • Boa iluminação, sem sombras{'\n'}
-              • Sem óculos escuros ou bonés{'\n'}
-              • Documento e rosto na mesma foto
-            </Typography>
-          </Box>
         </Box>
       </Box>
 
@@ -743,8 +661,6 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
         }}>
           <strong>✓ Nome completo</strong> deve aparecer no documento<br/>
           <strong>✓ Endereço completo</strong> deve estar legível<br/>
-          <strong>✓ Data recente</strong> (últimos 3 meses)<br/>
-          <strong>✓ Conta de luz, água, gás, telefone</strong> ou extrato bancário<br/>
           <strong>✓ Documento oficial</strong> (não aceito boleto)<br/>
           <strong>✓ Texto legível</strong>, sem borrões ou cortes
         </Typography>
@@ -818,21 +734,11 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
           <Box sx={{ 
             width: '100%',
             mt: 1.5,
-            padding: '10px',
+            padding: '8px',
             backgroundColor: '#fff3e0',
-            borderRadius: '8px',
+            borderRadius: '6px',
             border: '1px solid #ffcc02'
           }}>
-            <Typography variant="caption" sx={{ 
-              color: '#e65100', 
-              fontSize: '0.7rem',
-              display: 'block',
-              textAlign: 'center',
-              fontWeight: 'bold',
-              mb: 0.5
-            }}>
-              Documentos aceitos:
-            </Typography>
             <Typography variant="caption" sx={{ 
               color: '#e65100', 
               fontSize: '0.65rem',
@@ -840,12 +746,7 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({
               textAlign: 'center',
               lineHeight: 1.3
             }}>
-              • Conta de luz, água, gás ou telefone{'\n'}
-              • Extrato bancário{'\n'}
-              • Contrato de aluguel{'\n'}
-              • Correspondência bancária{'\n'}
-              • Nome e endereço legíveis{'\n'}
-              • Data dos últimos 3 meses
+              Nome e endereço legíveis com boa iluminação
             </Typography>
           </Box>
         </Box>

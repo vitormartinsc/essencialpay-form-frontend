@@ -223,16 +223,16 @@ const BankingStep: React.FC<BankingStepProps> = ({
             sx={fieldStyles}
           />
         </Box>
-        <Box sx={{ flex: 0.5, mb: { xs: 0, sm: 0 } }}>
+        <Box sx={{ flex: 0.5, mb: { xs: 0, sm: 0 }, minWidth: '120px' }}>
           <TextField
             fullWidth
-            label="DV (dígito verificador)"
+            label="DV"
             name="accountDv"
             value={formData.accountDv}
             onChange={onFieldChange}
             error={!!errors.accountDv}
             helperText={errors.accountDv}
-            placeholder="00"
+            placeholder="0"
             InputLabelProps={labelProps}
             sx={fieldStyles}
           />
