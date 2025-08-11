@@ -133,10 +133,10 @@ export const formatAgency = (value: string): string => {
  * Format account input to XXXXXX-X pattern (6 digits + dash + 1 check digit)
  */
 /**
- * Format account number (only digits, up to 9 digits)
+ * Format account number (only digits, up to 11 digits)
  */
 export const formatAccount = (value: string): string => {
-  const onlyDigits = value.replace(/\D/g, '').slice(0, 9);
+  const onlyDigits = value.replace(/\D/g, '').slice(0, 11);
   return onlyDigits;
 };
 
@@ -149,11 +149,11 @@ export const formatAccountDv = (value: string): string => {
 };
 
 /**
- * Validate account number format (1-9 digits)
+ * Validate account number format (1-11 digits)
  */
 export const validateAccount = (account: string): boolean => {
   const cleanAccount = account.replace(/\D/g, '');
-  return cleanAccount.length >= 1 && cleanAccount.length <= 9;
+  return cleanAccount.length >= 1 && cleanAccount.length <= 11;
 };
 
 /**

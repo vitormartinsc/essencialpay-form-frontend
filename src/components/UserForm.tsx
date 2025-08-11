@@ -302,7 +302,7 @@ const UserForm: React.FC = () => {
     if (!formData.account.trim()) {
       newErrors.account = 'Conta é obrigatória';
     } else if (!validateAccount(formData.account)) {
-      newErrors.account = 'Conta deve ter entre 1 e 9 dígitos';
+      newErrors.account = 'Conta deve ter entre 1 e 11 dígitos';
     }
 
     if (!formData.accountDv.trim()) {
