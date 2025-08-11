@@ -232,7 +232,7 @@ const BankingStep: React.FC<BankingStepProps> = ({
             onChange={onFieldChange}
             error={!!errors.accountDv}
             helperText={errors.accountDv}
-            placeholder="0"
+            placeholder="00"
             InputLabelProps={labelProps}
             sx={fieldStyles}
           />
