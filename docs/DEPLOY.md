@@ -25,13 +25,13 @@ No Railway, vá em Settings > Environment Variables e adicione:
 ```
 NODE_ENV=production
 PORT=8080
-FRONTEND_URL=https://www.essencialpay.com.br
-CORS_ALLOWED_ORIGINS=https://www.essencialpay.com.br,http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:5176,http://localhost:8080
+FRONTEND_URL=https://your-domain.com
+CORS_ALLOWED_ORIGINS=https://your-domain.com,http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:5176,http://localhost:8080
 DATABASE_URL=postgresql://username:password@hostname:port/database
 AWS_ACCESS_KEY_ID=your_access_key_id
 AWS_SECRET_ACCESS_KEY=your_secret_access_key
 AWS_S3_REGION_NAME=us-east-2
-AWS_STORAGE_BUCKET_NAME=essencial-form-files
+AWS_STORAGE_BUCKET_NAME=your-bucket-name
 ```
 
 ### Passo 4: Configurar PostgreSQL
@@ -46,7 +46,7 @@ AWS_STORAGE_BUCKET_NAME=essencial-form-files
 ### Passo 1: Configurar Variáveis de Ambiente
 1. Crie um arquivo `.env.production` com:
 ```
-VITE_API_URL=https://essencialpay-form-backend-production.up.railway.app
+VITE_API_URL=https://your-backend-name.railway.app
 ```
 
 ### Passo 2: Deploy no Vercel
@@ -58,8 +58,8 @@ VITE_API_URL=https://essencialpay-form-backend-production.up.railway.app
 
 ### Passo 3: Atualizar CORS
 Após o deploy do frontend, atualize as variáveis no Railway:
-- `FRONTEND_URL=https://www.essencialpay.com.br`
-- `CORS_ALLOWED_ORIGINS=https://www.essencialpay.com.br,http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:5176,http://localhost:8080`
+- `FRONTEND_URL=https://your-vercel-url.vercel.app`
+- `CORS_ALLOWED_ORIGINS=https://your-vercel-url.vercel.app,http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:5176,http://localhost:8080`
 
 ## 3. Configuração do AWS S3
 
@@ -76,8 +76,8 @@ Após o deploy do frontend, atualize as variáveis no Railway:
 
 ## 4. Testes
 
-1. Teste o backend acessando: `https://essencialpay-form-backend-production.up.railway.app/health`
-2. Teste o frontend acessando: `https://www.essencialpay.com.br`
+1. Teste o backend acessando: `https://your-backend-name.railway.app/health`
+2. Teste o frontend acessando: `https://your-frontend-url.vercel.app`
 3. Teste o formulário completo
 
 ## Troubleshooting

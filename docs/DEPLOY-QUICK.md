@@ -17,17 +17,17 @@ NODE_ENV=production
 PORT=8080
 
 # Configurações do Banco de Dados
-DATABASE_URL=postgresql://postgres:LZIjjUhtSyUllFmChEPrImDOuOOwFtkI@postgres.railway.internal:5432/railway
+DATABASE_URL=postgresql://username:password@host:port/database
 
 # Configurações da AWS S3
-AWS_ACCESS_KEY_ID=AKIAR7GCOJBDZLQM2CIW
-AWS_SECRET_ACCESS_KEY=cTSoSf7dUBPeaaOa3HynWxAHpHzoGCvmQK7IsHvP
-AWS_STORAGE_BUCKET_NAME=essencial-form-files
-AWS_S3_REGION_NAME=us-east-2
+AWS_ACCESS_KEY_ID=your_aws_access_key_id
+AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
+AWS_STORAGE_BUCKET_NAME=your-bucket-name
+AWS_S3_REGION_NAME=your-region
 
 # Configurações do Frontend (URL que será gerada pelo Vercel)
-FRONTEND_URL=https://essencial-form-frontend.vercel.app
-CORS_ALLOWED_ORIGINS=https://essencial-form-frontend.vercel.app,http://localhost:5173,http://localhost:5176
+FRONTEND_URL=https://your-frontend-url.vercel.app
+CORS_ALLOWED_ORIGINS=https://your-frontend-url.vercel.app,http://localhost:5173,http://localhost:5176
 ```
 
 ---
@@ -40,7 +40,7 @@ CORS_ALLOWED_ORIGINS=https://essencial-form-frontend.vercel.app,http://localhost
 2. **Conecte** seu repositório do backend
 3. **Adicione as variáveis de ambiente** acima no Railway
 4. **Aguarde** o deploy finalizar
-5. **Copie** a URL gerada pelo Railway (ex: `https://essencialpay-form-backend.railway.app`)
+5. **Copie** a URL gerada pelo Railway (ex: `https://your-backend-name.railway.app`)
 
 ### **Passo 2: Deploy do Frontend (Vercel)**
 
@@ -48,7 +48,7 @@ CORS_ALLOWED_ORIGINS=https://essencial-form-frontend.vercel.app,http://localhost
 2. **Conecte** seu repositório do frontend
 3. **Adicione** a variável de ambiente:
    ```
-   VITE_API_URL=https://essencialpay-form-backend.railway.app
+   VITE_API_URL=https://your-backend-name.railway.app
    ```
    (Use a URL do seu backend do Railway)
 4. **Deploy** o frontend
@@ -58,8 +58,8 @@ CORS_ALLOWED_ORIGINS=https://essencial-form-frontend.vercel.app,http://localhost
 1. **Volte** ao Railway
 2. **Atualize** as variáveis:
    ```
-   FRONTEND_URL=https://sua-url-do-vercel.vercel.app
-   CORS_ALLOWED_ORIGINS=https://sua-url-do-vercel.vercel.app,http://localhost:5173,http://localhost:5176
+   FRONTEND_URL=https://your-vercel-url.vercel.app
+   CORS_ALLOWED_ORIGINS=https://your-vercel-url.vercel.app,http://localhost:5173,http://localhost:5176
    ```
 
 ---

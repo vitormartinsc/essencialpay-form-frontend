@@ -1,6 +1,6 @@
-# Essencial Pay - Formulário de Cadastro
+# Formulário de Cadastro - React TypeScript
 
-> Plataforma de cadastro para vinculação de maquininhas de cartão e serviços de pagamento
+> Plataforma de cadastro para coleta de dados pessoais, endereço, informações bancárias e documentos
 
 ## 🚀 Tecnologias
 
@@ -178,7 +178,7 @@ src/
 
 ## 📄 Licença
 
-Este projeto é privado e propriedade da EssentialPay.
+Este projeto está disponível sob licença MIT.
 
 ## 👨‍💻 Desenvolvimento
 
